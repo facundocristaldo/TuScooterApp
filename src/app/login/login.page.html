@@ -1,0 +1,20 @@
+
+
+<ion-content>
+  <div id="loginForm" class="form">
+
+    <img id="logoImage" src="../../assets/scooter_logo.png" title="Logo" alt="TuScooter">
+    
+    <input id="username" class="shadow" placeholder="Usuario" type="text" [(ngModel)]="usernameInput"/>
+    
+    <input id="password" class="shadow" placeholder="Contraseña" type="password" [(ngModel)]="passwordInput"/>
+    
+    <ion-button expand="block" id="loginBtn" (click)="login()">Ingresar</ion-button>
+    
+    <div id="noAccountYet">
+      <p>
+        Todavía no tienes una cuenta?<a routerLink="/register">Registrate</a>
+      </p>
+    </div>
+  </div>
+</ion-content>

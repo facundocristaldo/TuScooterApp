@@ -1,0 +1,36 @@
+div#loginForm {
+    width: 75%;
+    position: absolute;
+    left: 50%;
+    margin-left: -40%;
+    top: 10%;
+}
+div#loginForm  input {
+    padding: 12px;
+    border-radius: 9px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+    border: none;
+    text-align: center;
+}
+div#loginForm img#logoImage{
+    width: 100%;
+    margin-bottom: 30px;
+}
+#loginbtn{
+    width: 100%;
+}
+#noAccountYet{
+    text-align: center;
+    margin-top: 50px;
+}
+div#noAccountYet a {
+    text-decoration: none;
+}
+
+.shadow {
+    -moz-box-shadow:    1px 1px 30px -6px #ccc;
+    -webkit-box-shadow: 1px 1px 30px -6px #ccc;
+    box-shadow:         1px 1px 30px -6px #ccc;
+  }

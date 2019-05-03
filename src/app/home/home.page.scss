@@ -1,4 +1,14 @@
+
 .welcome-card ion-img {
   max-height: 35vh;
   overflow: hidden;
+}
+
+.qrscannerbtn{
+  position: absolute;
+  left: 50%;
+  width: 120px;
+  height: 50px;
+  margin-left: -60px;
+  bottom: 30px;
 }
