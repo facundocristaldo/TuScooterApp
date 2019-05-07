@@ -1,9 +1,48 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>register</ion-title>
-  </ion-toolbar>
-</ion-header>
+
 
 <ion-content>
-
+<ion-card>
+  <ion-label id="registerLbl">Registro</ion-label>
+  <ion-icon id="closerRegisterBtn" icon-only name="close" (click)="goback()"></ion-icon>
+  <div id="registerForm" class="form">
+    <ion-item id="nameSurname">
+      <ion-item class="FormAttribute">
+        <ion-label class="AttrLabel">Nombre</ion-label>
+        <ion-input placeholder="Joe" type="text" [(ngModel)]="nameInput"></ion-input>
+      </ion-item>
+      <ion-item class="FormAttribute">
+        <ion-label class="AttrLabel">Apellido</ion-label>
+        <ion-input placeholder="Doe" type="text" [(ngModel)]="surnameInput"></ion-input>
+      </ion-item>
+    </ion-item>
+    <ion-item class="FormAttribute">
+      <ion-label class="AttrLabel">Nickname</ion-label>
+      <ion-input placeholder="JoeDoe" type="text" [(ngModel)]="usernameInput" ></ion-input>
+    </ion-item>
+    <ion-item class="FormAttribute">
+      <ion-label class="AttrLabel">Contraseña</ion-label>
+      <ion-input placeholder="********" type="password" [(ngModel)]="passwordInput"></ion-input>
+    </ion-item>
+    <ion-item class="FormAttribute">
+      <ion-label class="AttrLabel">Repetir contraseña</ion-label>
+      <ion-input placeholder="********" type="password" [(ngModel)]="confPasswordInput"></ion-input>
+    </ion-item>
+    <ion-item class="FormAttribute">
+      <ion-label class="AttrLabel">Email</ion-label>
+      <ion-input placeholder="joedoe@email.com" type="email" [(ngModel)]="emailInput"></ion-input>
+    </ion-item>
+    <ion-item class="FormAttribute">
+      <ion-label class="AttrLabel">Celular</ion-label>
+      <ion-input placeholder="0910123534" type="number" [(ngModel)]="cellphoneInput"></ion-input>
+    </ion-item>
+    
+    <ion-button expand="block" id="registerBtn" (click)="register()">Registrarse</ion-button>
+    
+    <div id="noAccountYet">
+      <ion-label>
+        Ya tienes una cuenta?<a (click)="goback()">Ingresar</a>
+      </ion-label>
+    </div>
+  </div>
+</ion-card>
 </ion-content>

@@ -1,0 +1,16 @@
+
+  
+  #mapBackground{
+    position: absolute;
+    
+    width:100%;
+    height: 100%;
+  }
+
+  ion-button#endTravelBtn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    margin-left: -25%;
+    width: 50%;
+  }

@@ -1,17 +1,28 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { LoginPage } from './login/login.page';
+import { HomePage } from './home/home.page';
+import { ListPage } from './list/list.page';
+import { RegisterPage } from './register/register.page';
+import { ProfilePage } from './profile/profile.page';
+import { QrscannerPage } from './qrscanner/qrscanner.page';
+import { TravelinfoPage } from './travelinfo/travelinfo.page';
+import { TravelstatePage } from './travelstate/travelstate.page';
+import { SaldoPage } from './saldo/saldo.page';
+import { ChangeipPage } from './changeip/changeip.page';
 
 const routes: Routes = [
   { path: '',             redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login',        loadChildren: './login/login.module#LoginPageModule' },
-  { path: 'home',         loadChildren: './home/home.module#HomePageModule'  },
-  { path: 'list',         loadChildren: './list/list.module#ListPageModule'  },
-  { path: 'register',     loadChildren: './register/register.module#RegisterPageModule' },
-  { path: 'profile',      loadChildren: './profile/profile.module#ProfilePageModule' },
-  { path: 'saldo',        loadChildren: './saldo/saldo.module#SaldoPageModule' },
-  { path: 'qrscanner',    loadChildren: './qrscanner/qrscanner.module#QrscannerPageModule' },
-  { path: 'travelinfo',   loadChildren: './travelinfo/travelinfo.module#TravelinfoPageModule' },
-  { path: 'travelstate',  loadChildren: './travelstate/travelstate.module#TravelstatePageModule' }
+  { path: 'login',        component: LoginPage },
+  { path: 'home',         component: HomePage  },
+  { path: 'list',         component: ListPage },
+  { path: 'register',     component: RegisterPage },
+  { path: 'profile',      component: ProfilePage },
+  { path: 'qrscanner',    component: QrscannerPage },
+  { path: 'travelinfo/:scooter/:alquiler',   component: TravelinfoPage },
+  { path: 'travelstate/:scooter/:alquiler',  component: TravelstatePage},
+  { path: 'saldo',        component: SaldoPage },
+  { path: 'changeip', component: ChangeipPage }
 ];
 
 @NgModule({

@@ -74,8 +74,12 @@
   --ion-color-light-contrast-rgb: 0, 0, 0;
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
+
+  
 }
 ion-app.cameraView ion-nav{opacity:0}
-ion-app.cameraView,ion-app.cameraView ion-content,ion-app.cameraView .nav-decor{
-  background: transparent !important;
-  background-size: 100% 100% !important;}
+
+.invisibleAll{
+  background: transparent none !important;
+  background-size: 100% 100% !important;
+}

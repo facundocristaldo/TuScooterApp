@@ -16,6 +16,14 @@
               </ion-label>
             </ion-item>
           </ion-menu-toggle>
+          <ion-menu-toggle auto-hide="false">
+              <ion-item [routerDirection]="'root'" (click)="logout()">
+                <ion-icon slot="start" [name]="return-left"></ion-icon>
+                <ion-label>
+                  Salir
+                </ion-label>
+              </ion-item>
+            </ion-menu-toggle>
         </ion-list>
       </ion-content>
     </ion-menu>

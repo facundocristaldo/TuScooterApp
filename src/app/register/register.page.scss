@@ -1,0 +1,60 @@
+
+    ion-label#registerLbl {
+        font-size: 2.5pc;
+        font-family: serif;
+        font-weight: bolder;
+        margin-left: 6px;
+    }
+    ion-icon#closerRegisterBtn {
+        position: absolute;
+        font-size: 2pc;
+        color: black;
+        font-weight: bold;
+        right: 11px;
+        top: 11px;
+    }
+    #registerForm> ion-item {
+        width: 100%;
+        /* height: 4.4pc; */
+        margin-top: 1.3pc;
+        margin-bottom: 1.3pc;
+    }
+
+    ion-item>ion-input {
+        /* position: absolute !important; */
+        top: 0.5pc;
+        margin-left:1pc;
+    }
+
+    ion-item>ion-label {
+        position: absolute;
+        font-size: 14px !important;
+        top: -10px;
+        left: 0px;
+        font-weight: bold;
+    }
+
+    ion-item#nameSurname>ion-item>ion-input {
+        margin-left: 1.6pc;
+    }
+    
+    ion-item#nameSurname>ion-item {
+        margin-left: -16px;
+    }
+
+    ion-button#registerBtn:active {
+        opacity: 1;
+    }
+    ion-button#registerBtn {
+        height: 4pc;
+        opacity: 0.8;
+    }
+    div#noAccountYet {
+        width: 50%;
+        text-align: center;
+        position: relative;
+        left: 50%;
+        margin-left: -25%;
+        margin-top: 1pc;
+        margin-bottom: 1pc;
+    }

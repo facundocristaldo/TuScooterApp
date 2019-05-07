@@ -1,9 +1,17 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>travelstate</ion-title>
+    <ion-title>Viaje en curso</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+    <!-- <div id="mapBackground">
+      <google-map [isTrack]="true"></google-map>
+    </div> -->
+    <div id="travelInfo">
+      <ion-label>Hora de comienzo: {{travelStartTime}}</ion-label>
+      <ion-label>guidAlquiler:"{{guiAlquiler}}"</ion-label>
+      <ion-label>guidScooter:"{{guiScooter}}"</ion-label>
+      <ion-button expand="block" id="endTravelBtn" (click)="stopTravel()"><ion-label >Finalizar</ion-label></ion-button>
+    </div>
 </ion-content>

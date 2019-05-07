@@ -2,7 +2,7 @@ div#loginForm {
     width: 75%;
     position: absolute;
     left: 50%;
-    margin-left: -40%;
+    margin-left: -37%;
     top: 10%;
 }
 div#loginForm  input {
@@ -34,3 +34,18 @@ div#noAccountYet a {
     -webkit-box-shadow: 1px 1px 30px -6px #ccc;
     box-shadow:         1px 1px 30px -6px #ccc;
   }
+
+a#ghost {
+    background-color: lightgray;
+    color: black !important;
+    text-decoration: none;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    opacity: .2;
+    padding: 5px;
+    border-radius: 7px;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+}

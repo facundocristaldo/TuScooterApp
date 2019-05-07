@@ -4,11 +4,14 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>
-      Home
+      Inicio
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  
+  <div id="mapBackground">
+    <google-map [isTrack]="false"></google-map>
+  </div>
+  <ion-button expand="block" id="startTravelBtn" (click)="startTravel()">Comenzar viaje</ion-button>
 </ion-content>
