@@ -67,7 +67,7 @@ export class RegisterPage implements OnInit {
       body
       ,headers)
       .then(response=>{ 
-        if (response.status==200){//login ok
+        if (response.status==200 && response.data.toString()=="true"){//login ok
           if (response.data.toString()=="true"){
             this.toastCtrl.create({
             message: 'Registrado correctamente',
@@ -104,10 +104,8 @@ export class RegisterPage implements OnInit {
   ionViewWillEnter(){
     this.menuCtl.enable(false);
     this.platform.ready().then(()=>{
-      this.storage.get("serverIP").then(data=>{
-        this.storage.get("serverPORT").then(data2=>{
-          this.serverURL= "http://"+data+":"+data2+"/Proyecto-2019Web/resources/";
-        })
+      this.storage.get("serverURL").then(serverURL=>{
+        this.serverURL= serverURL;
       })
     })
   }

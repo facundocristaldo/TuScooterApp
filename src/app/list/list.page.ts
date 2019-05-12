@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { HTTP } from '@ionic-native/http/ngx';
+import { ToastButton } from '@ionic/core';
+import { ToastController, Platform } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
+import { error } from 'util';
 
 @Component({
   selector: 'app-list',
@@ -6,34 +11,155 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['list.page.scss']
 })
 export class ListPage implements OnInit {
-  private selectedItem: any;
-  private icons = [
-    'flask',
-    'wifi',
-    'beer',
-    'football',
-    'basketball',
-    'paper-plane',
-    'american-football',
-    'boat',
-    'bluetooth',
-    'build'
-  ];
-  public items: Array<{ title: string; note: string; icon: string }> = [];
-  constructor() {
-    for (let i = 1; i < 11; i++) {
-      this.items.push({
-        title: 'Viaje ' + i,
-        note: '#' + i,
-        icon: this.icons[Math.floor(Math.random() * this.icons.length)]
-      });
-    }
+
+  username  = "";
+  serverURL="";
+  alquileres : any[]=[];
+  
+  
+  constructor(private http:HTTP,private toastController:ToastController,private platform : Platform, private storage:Storage) {
+  
   }
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter(){
+    this.alquileres=[];
+    this.username="";
+    this.platform.ready().then(()=>{
+      this.storage.get("userLoginInfo").then(e=>this.username=e.username)
+      this.storage.get("serverURL").then((serverURL=>{
+        this.serverURL = serverURL;
+        this.http.get(this.serverURL+"alquileres/porcliente?username="+this.username,{},{}).then(response=>{
+          let tempListaAlquileres :any[] = response.data;
+          for (var i=0;i<tempListaAlquileres.length;i++){
+            var tempAlquiler:any = tempListaAlquileres[i];
+            var tempfecha :String = tempAlquiler.timestamp;
+            var tempduration : String = tempAlquiler.duration;
+            var tempgeometry: any = tempAlquiler.geometria;
+            this.alquileres.push({
+              username: tempAlquiler.cliente,
+              alquilerGUID: tempAlquiler.guid,
+              fechaAlquiler: tempfecha.substr(0,18).replace("[a-zA-Z]"," "),
+              precioAlquiler:tempAlquiler.price,
+              duracion:tempduration.substr(12,8).replace("[a-zA-Z]",""),
+              ubicacionesDeReferencia:tempgeometry.puntos
+            })
+          }
+
+        }).catch(err=>{
+          this.toastController.create({
+            message:"HTTP Error"+err,
+            duration:3000
+          }).then(e=>e.present())
+        })
+      }))
+    })
+
+  }
+
+  ViewDetails(alquiler){
+    this.toastController.create({
+      message:"Click sobre "+alquiler.alquilerFecha,
+      duration:3000
+    }).then(e=>e.present());
   }
   // add back when alpha.4 is out
   // navigate(item) {
   //   this.router.navigate(['/list', JSON.stringify(item)]);
   // }
 }
+
+
+/**
+ * FORMATO DE ALQUILERES
+ * [
+    {
+        "cliente": "mmaldonado",
+        "duration": "1970-01-01T03:53:31Z[UTC]",
+        "geometria": {
+            "puntos": [
+                {
+                    "lat": 0,
+                    "lng": 0
+                },
+                {
+                    "lat": 1,
+                    "lng": 1
+                },
+                {
+                    "lat": 2,
+                    "lng": 2
+                },
+                {
+                    "lat": 3,
+                    "lng": 3
+                },
+                {
+                    "lat": 4,
+                    "lng": 4
+                },
+                {
+                    "lat": 5,
+                    "lng": 5
+                },
+                {
+                    "lat": 6,
+                    "lng": 6
+                },
+                {
+                    "lat": 7,
+                    "lng": 7
+                },
+                {
+                    "lat": 8,
+                    "lng": 8
+                },
+                {
+                    "lat": 9,
+                    "lng": 9
+                }
+            ],
+            "type": "LINESTRING"
+        },
+        "guid": "c02ca59f-634d-4428-b192-76d37fc44df0",
+        "guidscooter": "oirqwb-eqrvev-wqrfqrf-qwef",
+        "price": -83189,
+        "timestamp": "2019-05-06T02:32:06.18Z[UTC]"
+    },
+    {
+        "cliente": "mmaldonado",
+        "duration": "1970-01-01T03:03:36Z[UTC]",
+        "geometria": {
+            "puntos": [
+                {
+                    "lat": 0,
+                    "lng": 0
+                },
+                {
+                    "lat": 1,
+                    "lng": 1
+                },
+                {
+                    "lat": 2,
+                    "lng": 2
+                },
+                {
+                    "lat": 3,
+                    "lng": 3
+                },
+                {
+                    "lat": 4,
+                    "lng": 4
+                }
+            ],
+            "type": "LINESTRING"
+        },
+        "guid": "5e1eb0ed-e376-456e-9e82-5a6d17f7c445",
+        "guidscooter": "oirqwb-eqrvev-wqrfqrf-qwef",
+        "price": 216,
+        "timestamp": "2019-05-07T01:26:08.113Z[UTC]"
+    }
+  ]
+ */

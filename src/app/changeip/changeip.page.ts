@@ -41,14 +41,16 @@ export class ChangeipPage implements OnInit {
     this.platform.ready().then(() => {
       this.storage.set("serverIP",this.IP).then(()=>{
         this.storage.set("serverPORT",this.PORT).then(()=>{
-
-          this.toastCtrl.create({
-            message: 'datos del servidor actualizados',
-            duration: 3000
-          }).then(e=>e.present());
-          this.navController.pop();
+          let serverURL = "http://"+this.IP+":"+this.PORT+"/Proyecto-2019Web/resources/";
+          this.storage.set("serverURL",serverURL).then(()=>{
+            this.toastCtrl.create({
+              message: 'datos del servidor actualizados',
+              duration: 3000
+            }).then(e=>e.present());
+            this.navController.pop();
+          });
         });
-      })
+      });
     });
   }
 

@@ -10,8 +10,11 @@
     </div> -->
     <div id="travelInfo">
       <ion-label>Hora de comienzo: {{travelStartTime}}</ion-label>
-      <ion-label>guidAlquiler:"{{guiAlquiler}}"</ion-label>
-      <ion-label>guidScooter:"{{guiScooter}}"</ion-label>
+      <ion-label>Duración del Viaje: {{travelDurationCounter.toString()}}</ion-label>
+      <!-- <ion-label>guidAlquiler:"{{guidAlquiler}}"</ion-label> -->
+      <ion-label>alquiler:"{{alquiler}}"</ion-label>      
+      <ion-label>guidScooter:"{{guidScooter}}"</ion-label>
+      {{body}}
       <ion-button expand="block" id="endTravelBtn" (click)="stopTravel()"><ion-label >Finalizar</ion-label></ion-button>
     </div>
 </ion-content>

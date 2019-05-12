@@ -17,16 +17,7 @@ export class QrscannerPage implements OnInit {
   isTest=true;
   serverURL="";
   ngOnInit() {
-    this.platform.ready().then(()=>{
-      this.storage.get("userLoginInfo").then((user)=>{
-        this.userinfo = user;
-      })
-      this.storage.get("serverIP").then(data=>{
-        this.storage.get("serverPORT").then(data2=>{
-          this.serverURL= "http://"+data+":"+data2+"/Proyecto-2019Web/resources/";
-        });
-      });
-    })
+    
   }
 
   constructor(
@@ -113,13 +104,16 @@ export class QrscannerPage implements OnInit {
     }
     this.http.setDataSerializer('json')
     this.http.post(this.serverURL+'alquileres/alquiler/E',conexion,headers).then(response=>{
+
     if (response.status==200 && response.data){
+      let infoAlquiler = response.data;
+      
+      // let guidAlquiler = infoAlquiler.get("guid");
       this.toastCtrl.create({
-        message:"Conectado al scooter:idAlquiler"+response.data,
-        duration:3000
+        message:"Conectado al scooter:idAlquiler="+infoAlquiler,
+        duration:5000
       }).then(e=>e.present());
-      let guidAlquiler = response.data;
-      this.avanzar(guidAlquiler,guidscooter)
+      this.avanzar(infoAlquiler,guidscooter)
     }else{
       this.toastCtrl.create({
         message:"No se pudo conectar al scooter",
@@ -129,13 +123,45 @@ export class QrscannerPage implements OnInit {
   })
   }
 
+  /**{
+    "cliente": "mmaldonado",
+    "duration": "1970-01-01T10:19:05Z[UTC]",
+    "guid": "76f5342a-f362-4dfd-8061-e5a433eb3066",
+    "guidscooter": "oirqwb-eqrvev-wqrfqrf-qwef",
+    "price": 0,
+    "timestamp": "2019-05-08T10:19:05.261Z[UTC]"
+} */
+
   ionViewDidLeave(){
     //window.document.querySelector('*').classList.remove('invisibleAll');
 
   }
+  ionViewWillEnter(){
+    this.platform.ready().then(()=>{
+      this.storage.get("userLoginInfo").then((user)=>{
+        this.userinfo = user;
+      })
+      this.storage.get("serverURL").then(serverURL=>{
+          this.serverURL= serverURL;
+      });
+    }) 
+  }
 
+  avanzar(infoalquiler:String,guidScooter:String){
+    this.platform.ready().then(()=>{
+      this.storage.set("alquiler",infoalquiler).then(()=>{
 
-  avanzar(guidalquiler,guidScooter){
-    this.router.navigate(["travelstate/"+guidScooter+"/"+guidalquiler])
+        this.storage.set("scooter",guidScooter).then(()=>{
+          this.storage.get("alquiler").then(gui=>{
+            this.toastCtrl.create({
+              message:"Added to storage alquiler guid:"+gui,
+              duration:10000
+            }).then(e=>e.present());
+          })
+          this.router.navigate(["travelstate"])
+
+        })
+      })
+    })
   }
 }
