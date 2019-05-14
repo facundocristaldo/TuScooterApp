@@ -43,7 +43,8 @@ export class TravelstatePage implements OnInit {
     let price = 0;
     let headers={
       'Accept':'*/*',
-      'Content-Type':'application/json'
+      'Content-Type':'application/json',
+      'Timeout':'5000'
     }
     
 
@@ -56,14 +57,15 @@ export class TravelstatePage implements OnInit {
         "cliente": this.userinfo.username
     }
     ,headers).then(response=>{
-      if (response.status==200){
+      let responseBody = response.data;
+      if (responseBody.status=='true'){
         this.toastController.create({
           message:"Alquiler finalizado con exito",
           duration:3000
         }).then(e=>e.present);
-        let infoAlquiler = response.data;
+        let infoAlquiler = responseBody.body;
         this.platform.ready().then(()=>{
-          this.storage.set("alquilerprice",infoAlquiler).then(()=>{
+          this.storage.set("alquilerprice",infoAlquiler.price).then(()=>{
 
             this.router.navigate(['travelinfo']);
           });

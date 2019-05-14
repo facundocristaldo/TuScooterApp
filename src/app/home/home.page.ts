@@ -24,15 +24,16 @@ export class HomePage {
     this.http.get(this.serverURL+"users/tiempodisponible?username="+this.username,{},{
       'Accept':'*/*'
     }).then(response=>{
+      let responseBody = response.data;
       this.toastController.create({
-        message:"HTTPResponse:"+response.data,
+        message:"HTTPResponse:"+responseBody.body,
         duration:3000
       }).then(e=>e.present());
       this.platform.ready().then(()=>{
-        this.storage.set("maxTimeToTravel",response.data);
+        this.storage.set("maxTimeToTravel",responseBody.body);
         this.alertController.create({
           header:"Tiempo máximo para usar el scooter",
-          message:"Usted tiene "+response.data+" segundos máximos para usar el scooter.",
+          message:"Usted tiene "+responseBody.body+" segundos máximos para usar el scooter.",
           buttons:[
             {
             text:'Continuar',

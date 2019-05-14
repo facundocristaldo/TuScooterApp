@@ -92,35 +92,36 @@ export class QrscannerPage implements OnInit {
 
 
   conectarScooter(guidscooter: string, username: any) {
-  let conexion = {
-    'guid': '123',
-    'price': 0.0,
-    'guidscooter': guidscooter,
-    'cliente': username
-  };
-  let headers={
-    'Accept':'*/*',
-    'Content-Type':'application/json'
-    }
-    this.http.setDataSerializer('json')
-    this.http.post(this.serverURL+'alquileres/alquiler/E',conexion,headers).then(response=>{
-
-    if (response.status==200 && response.data){
-      let infoAlquiler = response.data;
-      
-      // let guidAlquiler = infoAlquiler.get("guid");
-      this.toastCtrl.create({
-        message:"Conectado al scooter:idAlquiler="+infoAlquiler,
-        duration:5000
-      }).then(e=>e.present());
-      this.avanzar(infoAlquiler,guidscooter)
-    }else{
-      this.toastCtrl.create({
-        message:"No se pudo conectar al scooter",
-        duration:3000
-      }).then(e=>e.present());
-    }
-  })
+    let conexion = {
+      'guid': '123',
+      'price': 0.0,
+      'guidscooter': guidscooter,
+      'cliente': username
+    };
+    let headers={
+      'Accept':'*/*',
+      'Content-Type':'application/json',
+      'Timeout':'5000'
+      }
+      this.http.setDataSerializer('json')
+      this.http.post(this.serverURL+'alquileres/alquiler/E',conexion,headers).then(response=>{
+      let responseBody = response.data;
+      if (responseBody.success=='true' && responseBody.body){
+        let infoAlquiler = responseBody.body;
+        
+        // let guidAlquiler = infoAlquiler.get("guid");
+        this.toastCtrl.create({
+          message:"Conectado al scooter:idAlquiler="+infoAlquiler.guid,
+          duration:5000
+        }).then(e=>e.present());
+        this.avanzar(infoAlquiler.guid,guidscooter)
+      }else{
+        this.toastCtrl.create({
+          message:"No se pudo conectar al scooter",
+          duration:3000
+        }).then(e=>e.present());
+      }
+    })
   }
 
   /**{

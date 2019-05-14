@@ -39,7 +39,7 @@ export class LoginPage implements OnInit {
     let headers ={
       'Accept':'*/*',
       'Content-Type':'application/json',
-      'Connection-Timeout':'30000'
+      'Connection-Timeout':'10000'
     }
     this.toastCtrl.create({
       message: "HTTP Request address:"+this.serverURL+"users/login",
@@ -48,9 +48,10 @@ export class LoginPage implements OnInit {
 
     this.http.post(this.serverURL+'users/login?username='+this.usernameInput+'&password='+this.passwordInput,{},headers)
     .then(response=>{
-      if (response.status==200){//login ok
-        if (response.data){
-          let userdata =response.data;
+      let responseBody = response.data;
+      if (responseBody.success.toString()=="true" && responseBody.body!=null){//login ok
+        if (responseBody.body){
+          let userdata =responseBody.body;
           console.log("Login ok");
           let userLoginInfo = {
             username:this.usernameInput,
@@ -67,7 +68,7 @@ export class LoginPage implements OnInit {
             this.router.navigate(["home"]);
           });
         }
-      }else if(response.status=204){//error de validacion
+      }else if(responseBody.body==null){//error de validacion
           this.toastCtrl.create({
            message: 'Error de validación',
            duration: 3000
@@ -95,21 +96,22 @@ export class LoginPage implements OnInit {
 
   ionViewWillEnter(){
     // this.login();
+    this.changestyle();
     this.menuCtl.enable(false);
-    this.platform.ready().then(()=>{
-      this.storage.get("serverURL").then(serverURL=>{
-          this.serverURL= serverURL;
-          this.storage.get("userLoginInfo").then(userLoginInfo=>{
-            if (userLoginInfo){
-              this.usernameInput = userLoginInfo.username;
-              this.passwordInput = userLoginInfo.password;
-              this.login();
-            }else{
-              this.changestyle();
-            }
-          });
-        });
-      });
+    // this.platform.ready().then(()=>{
+    //   this.storage.get("serverURL").then(serverURL=>{
+    //       this.serverURL= serverURL;
+    //       this.storage.get("userLoginInfo").then(userLoginInfo=>{
+    //         if (userLoginInfo){
+    //           this.usernameInput = userLoginInfo.username;
+    //           this.passwordInput = userLoginInfo.password;
+    //           this.login();
+    //         }else{
+    //           this.changestyle();
+    //         }
+    //       });
+    //     });
+    //   });
   }
 
   ionViewWillLeave(){

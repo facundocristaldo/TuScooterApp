@@ -67,8 +67,9 @@ export class RegisterPage implements OnInit {
       body
       ,headers)
       .then(response=>{ 
-        if (response.status==200 && response.data.toString()=="true"){//login ok
-          if (response.data.toString()=="true"){
+        let responseBody = response.data;
+        if (response.status==200 && response.data){//login ok
+          if (responseBody.success.toString()=="true"){
             this.toastCtrl.create({
             message: 'Registrado correctamente',
             duration: 3000
@@ -82,7 +83,7 @@ export class RegisterPage implements OnInit {
               this.router.navigate(["login"]);
               });
           }
-        }else if(response.status==500){//error de validacion
+        }else if(response.status==500 || responseBody.success.toString()=="false"){//error de validacion
           this.toastCtrl.create({
            message: 'Error al registrar',
            duration: 3000

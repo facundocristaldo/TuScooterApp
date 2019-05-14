@@ -13,7 +13,7 @@ export class SaldoPage  implements OnInit {
 
   amount = 0;
   username = "facundotest";
-  saldoActual = "0";
+  saldoActual :String = "0";
   serverURL = "";
 
   constructor(
@@ -64,9 +64,11 @@ export class SaldoPage  implements OnInit {
             }).then(e=>e.present());
               this.http.post(this.serverURL+"users/recargar?username="+this.username+"&guidpaypal="+paymentdata.id+"&monto="+this.amount+"&moneda=USD",{},{
               'Accept':'*/*',
-              'content-Type':'application/json'
+              'content-Type':'application/json',
+              'Timeout':'5000'
             }).then(response=>{
-              if (response.data=="true" || response.data==true){
+              let responseBody= response.data
+              if (responseBody.body=="true" || responseBody.body==true){
                 this.toastCtrl.create({
                   message: "El pago se guardó correctamente",
                   duration: 3000
@@ -123,12 +125,24 @@ export class SaldoPage  implements OnInit {
   }
 
   ionViewWillEnter(){
+
     this.platform.ready().then(()=>{
       this.storage.get("serverURL").then(serverURL=>{
         this.serverURL= serverURL;
         this.storage.get("userLoginInfo").then(data=>{
           this.saldoActual = data.saldo
           this.username = data.username;
+          this.http.get(this.serverURL+"users/cliente?username="+this.username,{},{
+            'Accept':'*/*',
+            'Content-Type':'application/json',
+            'Timeout':'5000'
+          }).then(response=>{
+            let responseBody=response.data;
+            if (responseBody.body){
+              let userinfo = responseBody.body;
+              this.saldoActual=userinfo.saldo.toString();
+            }
+          })
         });
       });
     })
