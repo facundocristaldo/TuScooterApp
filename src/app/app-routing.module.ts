@@ -19,8 +19,8 @@ const routes: Routes = [
   { path: 'register',     component: RegisterPage },
   { path: 'profile',      component: ProfilePage },
   { path: 'qrscanner',    component: QrscannerPage },
-  { path: 'travelinfo/:scooter/:alquiler',   component: TravelinfoPage },
-  { path: 'travelstate/:scooter/:alquiler',  component: TravelstatePage},
+  { path: 'travelinfo',   component: TravelinfoPage },
+  { path: 'travelstate',  component: TravelstatePage},
   { path: 'saldo',        component: SaldoPage },
   { path: 'changeip', component: ChangeipPage }
 ];

@@ -11,12 +11,10 @@
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let item of items">
-      <ion-icon [name]="item.icon" slot="start"></ion-icon>
-      {{item.title}}
-      <div class="item-note" slot="end">
-        {{item.note}}
-      </div>
+    <ion-item class="alquilerItem" *ngFor="let alquiler of alquileres" (click)="ViewDetails(this)">
+      <ion-icon [name]="travel" slot="start"></ion-icon>
+      <ion-label class="alquilerFecha" >{{alquiler.fechaAlquiler}}</ion-label>
+      <ion-label class="alquilerPrecio">US {{alquiler.precioAlquiler}}</ion-label>
     </ion-item>
   </ion-list>
   <!--
@@ -25,3 +23,11 @@
     </div>
   -->
 </ion-content>
+
+<!-- this.alquileres.push({
+  username: tempAlquiler.cliente,
+  fechaAlquiler: tempfecha.substr(0,18).replace("[a-zA-Z]"," "),
+  precioAlquiler:tempAlquiler.price,
+  duracion:tempduration.substr(12,8).replace("[a-zA-Z]",""),
+  ubicacionesDeReferencia:tempgeometry.puntos
+}) -->

@@ -2,6 +2,7 @@ import { Component, OnInit, forwardRef, Inject } from '@angular/core';
 import {PayPal, PayPalPayment, PayPalConfiguration} from '@ionic-native/paypal/ngx';
 import { AlertController, Platform, ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
+import { HTTP } from '@ionic-native/http/ngx';
 
 @Component({
   selector: 'app-saldo',
@@ -20,19 +21,15 @@ export class SaldoPage  implements OnInit {
     private alertCtl:AlertController,
     private storage :Storage,
     private platform:Platform,
-    private toastCtrl:ToastController
+    private toastCtrl:ToastController,
+    private http:HTTP
     ) { 
       
     }
   
 
   ngOnInit() {
-    this.platform.ready().then(()=>{
-      this.storage.get("userLoginInfo").then(data=>{
-        this.saldoActual = data.saldo
-        this.username = data.username;
-      });
-    })
+    
   }
   
   async doPaypal(){
@@ -61,18 +58,26 @@ export class SaldoPage  implements OnInit {
           let payment = new PayPalPayment(this.amount.toString(), 'USD', 'Recarga USD '+this.amount+ ' para el usuario '+this.username, 'recarga');
           this.payPal.renderSinglePaymentUI(payment).then((response) => {
             let paymentdata = response.response;
-            
-            this.alertCtl.create({
-              header:"Éxito",
-              subHeader:"El pago se completó correctamente",
-              message:"Id:"+paymentdata.id,
-              buttons:["OK"]
-            }).then(e=>e.present());
-
             this.toastCtrl.create({
-            message: "El pago se completó correctamente.Id:"+paymentdata.id,
-            duration: 3000
+              message: "El pago se completó correctamente",
+              duration: 3000
             }).then(e=>e.present());
+              this.http.post(this.serverURL+"users/recargar?username="+this.username+"&guidpaypal="+paymentdata.id+"&monto="+this.amount+"&moneda=USD",{},{
+              'Accept':'*/*',
+              'content-Type':'application/json'
+            }).then(response=>{
+              if (response.data=="true" || response.data==true){
+                this.toastCtrl.create({
+                  message: "El pago se guardó correctamente",
+                  duration: 3000
+                }).then(e=>e.present());
+              }else{
+                this.toastCtrl.create({
+                  message: "Algo salió mal",
+                  duration: 3000
+                }).then(e=>e.present());
+              }
+            })
             
 
             // Example sandbox response
@@ -119,11 +124,13 @@ export class SaldoPage  implements OnInit {
 
   ionViewWillEnter(){
     this.platform.ready().then(()=>{
-      this.storage.get("serverIP").then(data=>{
-        this.storage.get("serverPORT").then(data2=>{
-          this.serverURL= "http://"+data+":"+data2+"/Proyecto-2019Web/resources/";
-        })
-      })
+      this.storage.get("serverURL").then(serverURL=>{
+        this.serverURL= serverURL;
+        this.storage.get("userLoginInfo").then(data=>{
+          this.saldoActual = data.saldo
+          this.username = data.username;
+        });
+      });
     })
   }
 }

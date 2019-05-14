@@ -3,7 +3,8 @@ div#loginForm {
     position: absolute;
     left: 50%;
     margin-left: -37%;
-    top: 10%;
+    opacity:0;
+    top: 0%;
 }
 div#loginForm  input {
     padding: 12px;
@@ -48,4 +49,13 @@ a#ghost {
     width: 30px;
     height: 30px;
     text-align: center;
+}
+
+
+
+.loginformShow{
+    top:10% !important;
+    opacity:1 !important;
+    transition-delay: 0ms;
+    transition-duration: 2s;   
 }

@@ -2,7 +2,8 @@
 
 <ion-content>
   <a id="ghost" routerLink="/changeip">IP</a>
-  <div id="loginForm" class="form">
+  <!-- <a id="ghost" (click)="changestyle()">IP</a> -->
+  <div [ngClass]="dinamicformclass" id="loginForm" class="form">
 
     <img id="logoImage" src="../../assets/scooter_logo.png" title="Logo" alt="TuScooter">
     

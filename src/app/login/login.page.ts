@@ -1,9 +1,10 @@
-import { Component, OnInit, Inject, forwardRef } from '@angular/core';
+import { Component, OnInit, Inject, forwardRef, ViewChild } from '@angular/core';
 import { MenuController, Platform, AlertController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { HomePage } from '../home/home.page';
 import { Storage } from '@ionic/storage';
 import { HTTP } from '@ionic-native/http/ngx';
+
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,8 @@ export class LoginPage implements OnInit {
   usernameInput ="";
   passwordInput="";
   serverURL = "";
+  dinamicformclass =""
+
   constructor(
     private menuCtl: MenuController,
     private router: Router,
@@ -29,20 +32,7 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
-    this.platform.ready().then(()=>{
-      this.storage.get("serverIP").then(data=>{
-        this.storage.get("serverPORT").then(data2=>{
-          this.serverURL= "http://"+data+":"+data2+"/Proyecto-2019Web/resources/";
-          this.storage.get("userLoginInfo").then(userLoginInfo=>{
-            if (userLoginInfo){
-              this.usernameInput = userLoginInfo.username;
-              this.passwordInput = userLoginInfo.password;
-              this.login();
-            }
-          })
-        })
-      })
-    });
+    
   }
 
   login(){
@@ -72,21 +62,24 @@ export class LoginPage implements OnInit {
             urlphoto:userdata.urlphoto,
             cellphone:userdata.cellphone,
           }
-          this.storage.set('userLoginInfo',userLoginInfo);
-          this.router.navigate(["home"]);
+          this.platform.ready().then(()=>{
+            this.storage.set('userLoginInfo',userLoginInfo);
+            this.router.navigate(["home"]);
+          });
         }
       }else if(response.status=204){//error de validacion
           this.toastCtrl.create({
            message: 'Error de validación',
            duration: 3000
           }).then(e=>e.present());
-        console.log("error de validación")
+          this.changestyle();
       }else{ //usuario no existe
         console.log("usuario no existe");
         this.toastCtrl.create({
            message: 'Error de validación',
            duration: 3000
         }).then(e=>e.present());
+        this.changestyle();
       }
     }).catch(err=>{
       console.log(err);
@@ -94,17 +87,37 @@ export class LoginPage implements OnInit {
            message: 'Algo salió mal :'+err.data,
            duration: 3000
           }).then(e=>e.present());
-      
+      this.changestyle();
     }).finally(()=>{
       
     });
   }
 
   ionViewWillEnter(){
+    // this.login();
     this.menuCtl.enable(false);
+    this.platform.ready().then(()=>{
+      this.storage.get("serverURL").then(serverURL=>{
+          this.serverURL= serverURL;
+          this.storage.get("userLoginInfo").then(userLoginInfo=>{
+            if (userLoginInfo){
+              this.usernameInput = userLoginInfo.username;
+              this.passwordInput = userLoginInfo.password;
+              this.login();
+            }else{
+              this.changestyle();
+            }
+          });
+        });
+      });
   }
 
   ionViewWillLeave(){
     this.menuCtl.enable(true);
   }
+
+  changestyle(){
+    this.dinamicformclass = "loginformShow";
+  }
+
 }
