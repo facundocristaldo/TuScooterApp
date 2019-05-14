@@ -20,6 +20,7 @@
     "@angular/platform-browser": "^7.2.2",
     "@angular/platform-browser-dynamic": "^7.2.2",
     "@angular/router": "^7.2.2",
+    "@ionic-native/background-mode": "^5.5.1",
     "@ionic-native/core": "^5.0.0",
     "@ionic-native/geolocation": "^5.5.1",
     "@ionic-native/http": "^5.5.1",
@@ -32,8 +33,9 @@
     "@ionic/storage": "^2.2.0",
     "card.io.cordova.mobilesdk": "2.1.0",
     "com.paypal.cordova.mobilesdk": "3.5.0",
-    "cordova-android": "7.1.4",
+    "cordova-android": "^8.0.0",
     "cordova-browser": "5.0.4",
+    "cordova-ios": "5.0.1",
     "cordova-plugin-advanced-http": "2.0.9",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-file": "6.0.1",
@@ -52,7 +54,7 @@
   },
   "devDependencies": {
     "@angular-devkit/architect": "~0.13.8",
-    "@angular-devkit/build-angular": "~0.13.8",
+    "@angular-devkit/build-angular": "^0.13.9",
     "@angular-devkit/core": "~7.3.8",
     "@angular-devkit/schematics": "~7.3.8",
     "@angular/cli": "~7.3.8",
@@ -60,9 +62,9 @@
     "@angular/compiler-cli": "~7.2.2",
     "@angular/language-service": "~7.2.2",
     "@ionic/angular-toolkit": "^1.5.1",
-    "@types/node": "~10.14.2",
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
+    "@types/node": "~10.14.2",
     "codelyzer": "~4.5.0",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
@@ -94,7 +96,6 @@
       "cordova-sqlite-storage": {}
     },
     "platforms": [
-      "android",
       "browser"
     ]
   }

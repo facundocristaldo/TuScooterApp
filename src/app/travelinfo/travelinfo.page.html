@@ -5,8 +5,10 @@
 </ion-header>
 
 <ion-content>
-  <ion-label>GuidAlquiler:{{guidAlquiler}}</ion-label>
-  <ion-label>GuidScooter:{{guidScooter}}</ion-label>
-  <ion-label>Precio del Alquiler:{{AlquilerPrice}}</ion-label>
-<ion-button routerLink="/home">Volver al Inicio</ion-button>
+    <div id="travelInfo">
+      <ion-label>GuidAlquiler:{{guidAlquiler}}</ion-label>
+      <ion-label>GuidScooter:{{guidScooter}}</ion-label>
+      <ion-label>Precio del Alquiler:{{AlquilerPrice}}</ion-label>
+      <ion-button expand="block" id="goHomeBtn" routerLink="/home">Volver al Inicio</ion-button>
+    </div>
 </ion-content>

@@ -1,0 +1,28 @@
+ 
+  #mapBackground{
+    position: absolute;
+    
+    width:100%;
+    height: 100%;
+  }
+
+  ion-button#goHomeBtn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    margin-left: -25%;
+    width: 50%;
+  }
+  
+  div#travelInfo {
+    position: fixed;
+    bottom: 15%;
+    left: 3%;
+  }
+
+  div#travelInfo>ion-label{
+    /*text-transform: uppercase; */
+    padding: 6px;
+    margin: 10px 0;
+    display: block;
+  }
