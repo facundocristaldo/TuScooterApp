@@ -20,7 +20,7 @@ export class ListPage implements OnInit {
   constructor(private http:HTTP,private toastController:ToastController,private platform : Platform, private storage:Storage) {
   
   }
-
+ 
   ngOnInit() {
   }
 

@@ -25,3 +25,4 @@ describe('TravelinfoPage', () => {
     expect(component).toBeTruthy();
   });
 });
+ 

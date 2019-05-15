@@ -28,7 +28,7 @@ export class AppComponent {
       url: '/list',
       icon: 'list'
     },
-    {
+    { 
       title: 'Saldo',
       url: '/saldo',
       icon: 'card'

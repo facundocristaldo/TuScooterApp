@@ -24,7 +24,7 @@ const routes: Routes = [
   { path: 'saldo',        component: SaldoPage },
   { path: 'changeip', component: ChangeipPage }
 ];
-
+ 
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })

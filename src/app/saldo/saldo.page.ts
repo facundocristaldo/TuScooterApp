@@ -27,7 +27,7 @@ export class SaldoPage  implements OnInit {
       
     }
   
-
+ 
   ngOnInit() {
     
   }

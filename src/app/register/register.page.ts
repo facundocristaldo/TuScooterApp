@@ -29,7 +29,7 @@ export class RegisterPage implements OnInit {
     private navController:NavController,
     ) {
       
-    }
+    } 
 
   ngOnInit() {
   }

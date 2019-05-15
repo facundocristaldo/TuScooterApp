@@ -25,3 +25,4 @@ describe('QrscannerPage', () => {
     expect(component).toBeTruthy();
   });
 });
+  

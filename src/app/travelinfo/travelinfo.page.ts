@@ -22,7 +22,7 @@ export class TravelinfoPage implements OnInit {
   ngOnInit() {
     
   }
-  
+   
   ionViewWillEnter(){
     this.platform.ready().then(()=>{
       this.storage.get("scooter").then(scooter=>{

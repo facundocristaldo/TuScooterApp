@@ -66,3 +66,4 @@ export class ChangeipPage implements OnInit {
     this.menuCtl.enable(true);
   }
 }
+ 

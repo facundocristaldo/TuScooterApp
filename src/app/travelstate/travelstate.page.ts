@@ -17,7 +17,7 @@ export class TravelstatePage implements OnInit {
   
   travelDurationCounter : Timer = new Timer();
   
-
+ 
   userinfo;
   serverURL="";
   guidAlquiler :any;

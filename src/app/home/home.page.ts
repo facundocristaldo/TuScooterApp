@@ -75,3 +75,4 @@ export class HomePage {
   }
   constructor(private router: Router, private google:GoogleMapComponent, private http:HTTP,private alertController:AlertController,private platform:Platform,private storage:Storage,private toastController:ToastController){}
 }
+  

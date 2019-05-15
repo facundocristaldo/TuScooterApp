@@ -28,7 +28,7 @@ export class QrscannerPage implements OnInit {
     private storage:Storage,
     private http: HTTP,
     ){ 
-
+ 
   }
 
   scanCode(){

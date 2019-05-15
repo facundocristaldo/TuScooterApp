@@ -31,5 +31,5 @@ describe('ListPage', () => {
     const items = listPage.querySelectorAll('ion-item');
     expect(items.length).toEqual(10);
   });
-
+ 
 });

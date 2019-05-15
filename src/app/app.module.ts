@@ -26,7 +26,7 @@ import { SaldoPage } from './saldo/saldo.page';
 import { TravelinfoPage } from './travelinfo/travelinfo.page';
 import { IonicStorageModule } from '@ionic/storage';
 import { ChangeipPage } from './changeip/changeip.page';
-
+ 
 @NgModule({
   declarations: [AppComponent,
   HomePage,
