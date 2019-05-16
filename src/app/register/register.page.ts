@@ -60,14 +60,16 @@ export class RegisterPage implements OnInit {
         "saldo": 0.0
         }
       let headers={
-        'Content-Type':'application/json'
+        'Content-Type':'application/json',
+        'Accept':'*/*',
+        'Timeout':'5000'
       }
       this.http.setDataSerializer('json')
       this.http.post(this.serverURL+'users/client/abm/A',
       body
       ,headers)
       .then(response=>{ 
-        let responseBody = response.data;
+        let responseBody = JSON.parse(response.data);
         if (response.status==200 && response.data){//login ok
           if (responseBody.success.toString()=="true"){
             this.toastCtrl.create({

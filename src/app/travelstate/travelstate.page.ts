@@ -57,8 +57,8 @@ export class TravelstatePage implements OnInit {
         "cliente": this.userinfo.username
     }
     ,headers).then(response=>{
-      let responseBody = response.data;
-      if (responseBody.status=='true'){
+      let responseBody = JSON.parse(response.data);
+      if (responseBody.success=='true'){
         this.toastController.create({
           message:"Alquiler finalizado con exito",
           duration:3000

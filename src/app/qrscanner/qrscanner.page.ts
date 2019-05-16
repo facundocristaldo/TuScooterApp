@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
-import { Router } from '@angular/router';
-import { ToastController, Platform } from '@ionic/angular';
+import { ToastController, Platform, AlertController, MenuController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { HTTP } from '@ionic-native/http/ngx';
 
@@ -12,21 +11,25 @@ import { HTTP } from '@ionic-native/http/ngx';
 })
 export class QrscannerPage implements OnInit {
 
-  scannedcode = null;
   userinfo;
   isTest=true;
   serverURL="";
+  @ViewChild('shadow-root') shadowroot:HTMLElement;
+  lightEnabled: any;
+
   ngOnInit() {
     
   }
 
   constructor(
     private qrScanner: QRScanner,
-    private router:Router,
+    private navController:NavController,
     private toastCtrl: ToastController,
     private platform : Platform,
     private storage:Storage,
     private http: HTTP,
+    private alertController: AlertController,
+    private menuCtl:MenuController
     ){ 
  
   }
@@ -41,18 +44,13 @@ export class QrscannerPage implements OnInit {
          message: 'camera permission granted',
          duration: 1000
        }).then(e=>e.present());
-       this.scannedcode="Escneando";
        // start scanning
        this.qrScanner.show();
-
-
-         window.document.querySelector('*').classList.add('.invisiblebackground');
-         
          let scanSub = this.qrScanner.scan().subscribe((text: string) => {
            
            console.log('Scanned something', text);
 
-           this.qrScanner.hide(); // hide camera preview
+            // hide camera preview
          //window.document.querySelector('ion-content,.inner-scroll-y').classList.remove('.invisiblebackground');
 
          this.toastCtrl.create({
@@ -62,11 +60,6 @@ export class QrscannerPage implements OnInit {
          scanSub.unsubscribe(); // stop scanning
          this.qrScanner.destroy();
          this.conectarScooter(text,this.userinfo.username);
-         //this.conectarScooter("oirqwb-eqrvev-wqrfqrf-qwef",this.userinfo.username);
-         
-      
-
-
        });
 
 
@@ -91,7 +84,7 @@ export class QrscannerPage implements OnInit {
   }
 
 
-  conectarScooter(guidscooter: string, username: any) {
+  conectarScooter(guidscooter: string, username: any){
     let conexion = {
       'guid': '123',
       'price': 0.0,
@@ -105,15 +98,20 @@ export class QrscannerPage implements OnInit {
       }
       this.http.setDataSerializer('json')
       this.http.post(this.serverURL+'alquileres/alquiler/E',conexion,headers).then(response=>{
-      let responseBody = response.data;
-      if (responseBody.success=='true' && responseBody.body){
-        let infoAlquiler = responseBody.body;
+        this.toastCtrl.create({
+          message:"response "+JSON.stringify(response.data),
+          duration:3000
+        }).then(e=>e.present());
+      let responseBody = JSON.parse(response.data);
+      if (responseBody.success && responseBody.body!=null){
+        let infoAlquiler = JSON.parse(responseBody.body);
         
         // let guidAlquiler = infoAlquiler.get("guid");
         this.toastCtrl.create({
           message:"Conectado al scooter:idAlquiler="+infoAlquiler.guid,
           duration:5000
         }).then(e=>e.present());
+        this.qrScanner.hide();
         this.avanzar(infoAlquiler.guid,guidscooter)
       }else{
         this.toastCtrl.create({
@@ -134,10 +132,12 @@ export class QrscannerPage implements OnInit {
 } */
 
   ionViewDidLeave(){
+    
     //window.document.querySelector('*').classList.remove('invisibleAll');
 
   }
   ionViewWillEnter(){
+    this.menuCtl.enable(false);
     this.platform.ready().then(()=>{
       this.storage.get("userLoginInfo").then((user)=>{
         this.userinfo = user;
@@ -146,6 +146,13 @@ export class QrscannerPage implements OnInit {
           this.serverURL= serverURL;
       });
     }) 
+    this.shadowroot.style.background="transparent !important";
+    window.document.querySelector('app-root').classList.add('transparentBody');
+   
+  }
+
+  ionViewDidEnter(){
+    this.scanCode();
   }
 
   avanzar(infoalquiler:String,guidScooter:String){
@@ -159,10 +166,49 @@ export class QrscannerPage implements OnInit {
               duration:10000
             }).then(e=>e.present());
           })
-          this.router.navigate(["travelstate"])
+          this.navController.navigateForward("/travelstate")
 
         })
       })
     })
   }
+
+  toggleLight(){
+    if (this.lightEnabled){
+      this.qrScanner.disableLight();
+      this.lightEnabled = false;
+    }else{
+      this.qrScanner.enableLight();
+      this.lightEnabled = true;
+    }
+  }
+
+  writeCode(){
+    this.alertController.create({
+      header: "Escribe el código:",
+      inputs:[{name:"qrcode"}],
+      buttons:[{
+        text:"Cancelar",
+        role:"cancel"
+      },{
+        text:"Aceptar",
+        handler:data=>{
+          if (data.qrcode.trim()!=""){
+            this.conectarScooter(data.qrcode, this.userinfo.username) 
+          }else{
+            this.alertController.create({
+              message:"Ingrese un código",
+              buttons:[{text:"Aceptar"}]
+            }).then(e=>e.present());
+          }
+        }
+      }]
+    }).then(e=>e.present());
+  }
+
+
+  goback(){
+    this.navController.pop();
+  }
+
 }

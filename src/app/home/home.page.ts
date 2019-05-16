@@ -24,7 +24,7 @@ export class HomePage {
     this.http.get(this.serverURL+"users/tiempodisponible?username="+this.username,{},{
       'Accept':'*/*'
     }).then(response=>{
-      let responseBody = response.data;
+      let responseBody = JSON.parse(response.data);
       this.toastController.create({
         message:"HTTPResponse:"+responseBody.body,
         duration:3000

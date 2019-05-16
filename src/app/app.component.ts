@@ -5,6 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 
 @Component({
   selector: 'app-root',
@@ -42,7 +43,8 @@ export class AppComponent {
     private statusBar: StatusBar,
     private plt:Platform,
     private storage:Storage,
-    private router:Router
+    private router:Router,
+    private backgroundmode: BackgroundMode
   ) {
     this.initializeApp();
     // this.platform.ready().then(()=>{
@@ -57,6 +59,7 @@ export class AppComponent {
      
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      this.backgroundmode.enable();
     });
   }
   

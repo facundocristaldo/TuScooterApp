@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { NavParams, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 
 @Component({
@@ -14,7 +13,6 @@ export class TravelinfoPage implements OnInit {
   guidScooter="";
   AlquilerPrice="";
   constructor(
-    private navParams:NavParams,
     private platform:Platform,
     private storage:Storage
   ) { }

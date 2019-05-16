@@ -13,6 +13,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/cli": "^6.0.8",
     "@angular/common": "^7.2.2",
     "@angular/core": "^7.2.2",
     "@angular/forms": "^7.2.2",
@@ -20,8 +21,8 @@
     "@angular/platform-browser": "^7.2.2",
     "@angular/platform-browser-dynamic": "^7.2.2",
     "@angular/router": "^7.2.2",
-    "@ionic-native/background-mode": "^5.5.1",
-    "@ionic-native/core": "^5.0.0",
+    "@ionic-native/background-mode": "^5.0.0",
+    "@ionic-native/core": "^5.1.0",
     "@ionic-native/geolocation": "^5.5.1",
     "@ionic-native/http": "^5.5.1",
     "@ionic-native/paypal": "^5.0.0-beta.15",
@@ -37,6 +38,7 @@
     "cordova-browser": "5.0.4",
     "cordova-ios": "5.0.1",
     "cordova-plugin-advanced-http": "2.0.9",
+    "cordova-plugin-background-mode": "0.7.2",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-file": "6.0.1",
     "cordova-plugin-geolocation": "4.0.1",
@@ -48,7 +50,7 @@
     "cordova-plugin-whitelist": "^1.3.3",
     "cordova-sqlite-storage": "3.2.0",
     "core-js": "^2.5.4",
-    "rxjs": "~6.5.1",
+    "rxjs": "^6.3.0",
     "tslib": "^1.9.0",
     "zone.js": "~0.8.29"
   },
@@ -57,7 +59,6 @@
     "@angular-devkit/build-angular": "^0.13.9",
     "@angular-devkit/core": "~7.3.8",
     "@angular-devkit/schematics": "~7.3.8",
-    "@angular/cli": "~7.3.8",
     "@angular/compiler": "~7.2.2",
     "@angular/compiler-cli": "~7.2.2",
     "@angular/language-service": "~7.2.2",
@@ -96,7 +97,8 @@
       "cordova-sqlite-storage": {}
     },
     "platforms": [
-      "browser"
+      "browser",
+      "android"
     ]
   }
 }

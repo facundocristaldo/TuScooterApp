@@ -5,9 +5,12 @@
 </ion-header>
 
 <ion-content>
+    <div id="mapBackground">
+        <google-map [isTrack]="false"></google-map>
+    </div>
     <div id="travelInfo">
-      <ion-label>GuidAlquiler:{{guidAlquiler}}</ion-label>
-      <ion-label>GuidScooter:{{guidScooter}}</ion-label>
+      <!-- <ion-label>GuidAlquiler:{{guidAlquiler}}</ion-label> -->
+      <!-- <ion-label>GuidScooter:{{guidScooter}}</ion-label> -->
       <ion-label>Precio del Alquiler:{{AlquilerPrice}}</ion-label>
       <ion-button expand="block" id="goHomeBtn" routerLink="/home">Volver al Inicio</ion-button>
     </div>

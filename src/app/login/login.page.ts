@@ -48,7 +48,11 @@ export class LoginPage implements OnInit {
 
     this.http.post(this.serverURL+'users/login?username='+this.usernameInput+'&password='+this.passwordInput,{},headers)
     .then(response=>{
-      let responseBody = response.data;
+      let responseBody = JSON.parse(response.data);
+      this.toastCtrl.create({
+        message: 'response'+responseBody.body,
+        duration: 3000
+       }).then(e=>e.present());
       if (responseBody.success.toString()=="true" && responseBody.body!=null){//login ok
         if (responseBody.body){
           let userdata =responseBody.body;
@@ -98,20 +102,20 @@ export class LoginPage implements OnInit {
     // this.login();
     this.changestyle();
     this.menuCtl.enable(false);
-    // this.platform.ready().then(()=>{
-    //   this.storage.get("serverURL").then(serverURL=>{
-    //       this.serverURL= serverURL;
-    //       this.storage.get("userLoginInfo").then(userLoginInfo=>{
-    //         if (userLoginInfo){
-    //           this.usernameInput = userLoginInfo.username;
-    //           this.passwordInput = userLoginInfo.password;
-    //           this.login();
-    //         }else{
-    //           this.changestyle();
-    //         }
-    //       });
-    //     });
-    //   });
+    this.platform.ready().then(()=>{
+      this.storage.get("serverURL").then(serverURL=>{
+          this.serverURL= serverURL;
+          this.storage.get("userLoginInfo").then(userLoginInfo=>{
+            if (userLoginInfo){
+              this.usernameInput = userLoginInfo.username;
+              this.passwordInput = userLoginInfo.password;
+              this.login();
+            }else{
+              this.changestyle();
+            }
+          });
+        });
+      });
   }
 
   ionViewWillLeave(){

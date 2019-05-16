@@ -32,10 +32,10 @@ export class ListPage implements OnInit {
       this.storage.get("serverURL").then((serverURL=>{
         this.serverURL = serverURL;
         this.http.get(this.serverURL+"alquileres/porcliente?username="+this.username,{},{}).then(response=>{
-          let responseBody = response.data
-          let tempListaAlquileres :any[] = responseBody.body;
+          let responseBody = JSON.parse(response.data);
+          let tempListaAlquileres :any[] = JSON.parse(responseBody.body);
           for (var i=0;i<tempListaAlquileres.length;i++){
-            var tempAlquiler:any = tempListaAlquileres[i];
+            var tempAlquiler:any = JSON.parse(tempListaAlquileres[i]);
             var tempfecha :String = tempAlquiler.timestamp;
             var tempduration : String = tempAlquiler.duration;
             var tempgeometry: any = tempAlquiler.geometria;

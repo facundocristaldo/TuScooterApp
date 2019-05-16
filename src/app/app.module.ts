@@ -26,7 +26,9 @@ import { SaldoPage } from './saldo/saldo.page';
 import { TravelinfoPage } from './travelinfo/travelinfo.page';
 import { IonicStorageModule } from '@ionic/storage';
 import { ChangeipPage } from './changeip/changeip.page';
- 
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
+
+
 @NgModule({
   declarations: [AppComponent,
   HomePage,
@@ -71,6 +73,7 @@ import { ChangeipPage } from './changeip/changeip.page';
     PayPal,
     Geolocation,
     GoogleMapComponent,
+    BackgroundMode
   ],
   bootstrap: [AppComponent]
 })

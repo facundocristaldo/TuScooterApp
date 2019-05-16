@@ -67,7 +67,7 @@ export class SaldoPage  implements OnInit {
               'content-Type':'application/json',
               'Timeout':'5000'
             }).then(response=>{
-              let responseBody= response.data
+              let responseBody= JSON.parse(response.data);
               if (responseBody.body=="true" || responseBody.body==true){
                 this.toastCtrl.create({
                   message: "El pago se guardó correctamente",
@@ -139,7 +139,7 @@ export class SaldoPage  implements OnInit {
           }).then(response=>{
             let responseBody=response.data;
             if (responseBody.body){
-              let userinfo = responseBody.body;
+              let userinfo = JSON.parse(responseBody.body);
               this.saldoActual=userinfo.saldo.toString();
             }
           })

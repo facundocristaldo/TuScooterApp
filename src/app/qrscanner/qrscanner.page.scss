@@ -10,3 +10,42 @@
   .invisiblebackground{
     background: transparent none !important;
   } 
+  .transparentBody { background: transparent !important; }
+
+  #buttonsdiv{
+    width: 75%;
+    position: fixed;
+    bottom: 25%;
+    left: 50%;
+    margin-left: -39%;
+    text-align: center;
+  }
+
+  #buttonsdiv .actionButton{
+    border-radius: 100px;
+    background: var(--ion-color-primary);
+    position: relative;
+    padding: 15px;
+    height: 6pc;
+    width: 6pc;
+    font-size: 20px;
+    margin: 3%;
+    min-height: 80px;
+    min-width: 80px;
+    opacity: 0.6;
+  }
+  #buttonsdiv .lightBtn{
+    
+  }
+  #buttonsdiv .writeBtn{
+    
+  }
+
+  ion-icon#closerRegisterBtn {
+    position: absolute;
+    font-size: 2pc;
+    color: black;
+    font-weight: bold;
+    right: 11px;
+    top: 11px;
+  }
