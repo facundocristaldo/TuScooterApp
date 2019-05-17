@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MenuController, AlertController, Platform, ToastController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { HTTP } from '@ionic-native/http/ngx';
+import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms'
 
 @Component({
   selector: 'app-register',
@@ -11,14 +12,18 @@ import { HTTP } from '@ionic-native/http/ngx';
 })
 export class RegisterPage implements OnInit {
 
-  usernameInput : String="";
-  passwordInput : String="";
-  confPasswordInput : String="";
-  emailInput : String="";
-  nameInput : String="";
-  surnameInput : String="";
-  cellphoneInput : String="";
+  formgroup: FormGroup;
+
+
+  usernameInput : AbstractControl;
+  passwordInput : AbstractControl;
+  confPasswordInput : AbstractControl;
+  emailInput : AbstractControl;
+  nameInput : AbstractControl;
+  surnameInput : AbstractControl;
+
   serverURL = "";
+
   constructor(
     private router:Router,
     private menuCtl:MenuController,
@@ -27,35 +32,47 @@ export class RegisterPage implements OnInit {
     private http:HTTP,
     private toastCtrl:ToastController,
     private navController:NavController,
+    public formBuilder: FormBuilder
     ) {
-      
+      this.formgroup = formBuilder.group({
+        nameInput:['',[Validators.required]],
+        surnameInput:['',[Validators.required]],
+        usernameInput:['',[Validators.required]],
+        passwordInput:['',[Validators.required]],
+        confPasswordInput:['',[Validators.required]],
+        emailInput:['',[Validators.email,Validators.required]]
+
+      })
+
+      this.nameInput  =this.formgroup.controls["nameInput"];
+      this.surnameInput = this.formgroup.controls["surnameInput"];
+      this.usernameInput = this.formgroup.controls["usernameInput"];
+      this.passwordInput = this.formgroup.controls["passwordInput"];
+      this.confPasswordInput = this.formgroup.controls["confPasswordInput"];
+      this.emailInput = this.formgroup.controls["emailInput"];
     } 
 
   ngOnInit() {
   }
+
   register(){
-    if (this.usernameInput.trim()=="" || this.passwordInput.trim()=="" || this.confPasswordInput.trim()=="" || this.emailInput.trim()=="" || this.nameInput.trim()=="" || this.surnameInput.trim()==""){
+    if (this.passwordInput.value!==this.confPasswordInput.value){
       this.toastCtrl.create({
-           message: 'Complete todos los datos',
-           duration: 3000
-          }).then(e=>e.present());
-    }else if (this.passwordInput.trim()!=this.confPasswordInput.trim()){
-      this.toastCtrl.create({
-           message: 'Las contraseñas deben coincidir',
-           duration: 3000
-          }).then(e=>e.present());
-    }else{
+        message:"Las contraseñas deben coincidir",
+        duration:3000,
+      }).then(e=>e.present());
+    }else if (this.formgroup.valid){
       this.toastCtrl.create({
         message:"HTTP Request address."+this.serverURL+"users/client/abm/A",
         duration:3000,
       }).then(e=>e.present());
       let body={
-        "username":this.usernameInput,
-        "password":this.passwordInput,
-        "email":this.emailInput,
-        "name":this.nameInput,
-        "surname":this.surnameInput,
-        "cellphone":this.cellphoneInput,
+        "username":this.usernameInput.value,
+        "password":this.passwordInput.value,
+        "email":this.emailInput.value,
+        "name":this.nameInput.value,
+        "surname":this.surnameInput.value,
+        "cellphone":"",
         "urlphoto": "",
         "saldo": 0.0
         }
@@ -121,5 +138,6 @@ export class RegisterPage implements OnInit {
   goback(){
     this.navController.pop();
   }
+
 }
 

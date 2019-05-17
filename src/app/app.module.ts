@@ -8,7 +8,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule,ReactiveFormsModule  } from '@angular/forms';
 
 import { QRScanner} from '@ionic-native/qr-scanner/ngx';
 import { HTTP } from '@ionic-native/http/ngx';
@@ -27,7 +27,7 @@ import { TravelinfoPage } from './travelinfo/travelinfo.page';
 import { IonicStorageModule } from '@ionic/storage';
 import { ChangeipPage } from './changeip/changeip.page';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
-
+import { confirmEqualsValidator } from './register/confirmEqualsValidator.directive';
 
 @NgModule({
   declarations: [AppComponent,
@@ -42,6 +42,7 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
   RegisterPage,
   SaldoPage,
   ChangeipPage,
+  confirmEqualsValidator
 
   ],
   entryComponents: [
@@ -62,6 +63,7 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
     IonicModule.forRoot(),
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule ,
     IonicStorageModule.forRoot(),
   ],
   providers: [
