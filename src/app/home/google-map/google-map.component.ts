@@ -70,26 +70,26 @@ serverURL="";
          this.map.setCenter(new google.maps.LatLng(data.coords.latitude,data.coords.longitude));
        });
        this.drawScootersinMap();
-       if (this.isTrack ){
-          if (!this.isTracking){
-            console.log("Start tracking");
-            this.trackedRoute = []
-            this.isTracking = true;
-          }
-          this.positionSubscription = this.geo.watchPosition()
-            .pipe(
-              filter(p=> p.coords!==undefined)
-            )
-            .subscribe(data=>{
-              setTimeout(()=>{
-                console.log("user position:("+data.coords.latitude+","+data.coords.longitude+")");
-                this.map.setZoom(17);
-                this.map.setCenter(new google.maps.LatLng(data.coords.latitude,data.coords.longitude));
+      //  if (this.isTrack ){
+      //     if (!this.isTracking){
+      //       console.log("Start tracking");
+      //       this.trackedRoute = []
+      //       this.isTracking = true;
+      //     }
+      //     this.positionSubscription = this.geo.watchPosition()
+      //       .pipe(
+      //         filter(p=> p.coords!==undefined)
+      //       )
+      //       .subscribe(data=>{
+      //         setTimeout(()=>{
+      //           console.log("user position:("+data.coords.latitude+","+data.coords.longitude+")");
+      //           this.map.setZoom(17);
+      //           this.map.setCenter(new google.maps.LatLng(data.coords.latitude,data.coords.longitude));
                 
-                this.drawPath(this.trackedRoute);
-              });
-            }); 
-        }
+      //           this.drawPath(this.trackedRoute);
+      //         });
+      //       }); 
+      //   }
     });
     
   }
@@ -144,7 +144,8 @@ serverURL="";
         this.serverURL=data;
       }).then(()=>{
         this.http.setDataSerializer('json');
-        this.http.get(this.serverURL+"scooter/disponibles",{},{'Accept':'*/*'}).then(response=>{
+        this.http.get(this.serverURL+"scooter/disponibles",{},{}).then(response=>{
+          console.log(response.data)
           let tempScooterArray = response.data;
           this.availableScooters = [];
           tempScooterArray.forEach(onescooter=> {

@@ -52,7 +52,7 @@
         <p *ngIf="confPasswordInput.hasError('required') && confPasswordInput.touched">
           *Requerido
         </p>
-        <p *ngIf="confPasswordInput.errors?.notEqual && confPasswordInput.touched && !confPasswordInput.errors?.required">
+        <p *ngIf="confPasswordInput.value!=passwordInput.value && confPasswordInput.touched && !confPasswordInput.errors?.required">
             *Las contraseñas deben coincidir
           </p>
       </ion-item>
@@ -61,14 +61,16 @@
         <ion-input placeholder="0910123534" type="number" formControlName="cellphoneInput"></ion-input>
       </ion-item> -->
     </ion-list>
+    <div id="btnArea">
+      <ion-button expand="block" id="registerBtn" (click)="register()" [disabled]="formgroup.invalid" >Registrarse</ion-button>
+      
+      <div id="noAccountYet">
+        <ion-label>
+          Ya tienes una cuenta?<a (click)="goback()">Ingresar</a>
+        </ion-label>
+      </div>
+    </div>
   </form>
-  <ion-button expand="block" id="registerBtn" (click)="register()" [disabled]="formgroup.invalid" >Registrarse</ion-button>
-  
-  <div id="noAccountYet">
-    <ion-label>
-      Ya tienes una cuenta?<a (click)="goback()">Ingresar</a>
-    </ion-label>
-  </div>
 <!-- </ion-card> -->
 </ion-content>
  

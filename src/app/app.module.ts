@@ -27,7 +27,6 @@ import { TravelinfoPage } from './travelinfo/travelinfo.page';
 import { IonicStorageModule } from '@ionic/storage';
 import { ChangeipPage } from './changeip/changeip.page';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
-import { confirmEqualsValidator } from './register/confirmEqualsValidator.directive';
 
 @NgModule({
   declarations: [AppComponent,
@@ -42,7 +41,6 @@ import { confirmEqualsValidator } from './register/confirmEqualsValidator.direct
   RegisterPage,
   SaldoPage,
   ChangeipPage,
-  confirmEqualsValidator
 
   ],
   entryComponents: [
@@ -75,7 +73,7 @@ import { confirmEqualsValidator } from './register/confirmEqualsValidator.direct
     PayPal,
     Geolocation,
     GoogleMapComponent,
-    BackgroundMode
+    BackgroundMode,
   ],
   bootstrap: [AppComponent]
 })

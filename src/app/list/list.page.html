@@ -11,7 +11,7 @@
 
 <ion-content>
   <ion-list>
-    <ion-item class="alquilerItem" *ngFor="let alquiler of alquileres" (click)="ViewDetails(this)">
+    <ion-item class="alquilerItem" *ngFor="let alquiler of alquileres" (click)="ViewDetails(alquiler)">
       <ion-icon [name]="travel"></ion-icon>
       <ion-label class="alquilerFecha" >{{alquiler.fechaAlquiler}}</ion-label>
       <ion-label class="alquilerPrecio">US {{alquiler.precioAlquiler}}</ion-label>

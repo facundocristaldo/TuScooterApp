@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Platform, MenuController, ToastController, NavParams } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
+import { HTTP } from '@ionic-native/http/ngx';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-travelinfo',
@@ -9,12 +11,13 @@ import { Storage } from '@ionic/storage';
 })
 export class TravelinfoPage implements OnInit {
 
-  guidAlquiler="";
-  guidScooter="";
-  AlquilerPrice="";
+  alquiler :{};
   constructor(
     private platform:Platform,
-    private storage:Storage
+    private storage:Storage,
+    private menuCtl:MenuController,
+    private http:HTTP,
+    private activatedroute:ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -22,15 +25,30 @@ export class TravelinfoPage implements OnInit {
   }
    
   ionViewWillEnter(){
+    let alquilerguid = this.activatedroute.snapshot.paramMap.get("id")
+    this.menuCtl.enable(true);
     this.platform.ready().then(()=>{
-      this.storage.get("scooter").then(scooter=>{
-        this.guidScooter=scooter;
-        this.storage.get("alquiler").then(alquilerstorage=>{
-          this.guidAlquiler = alquilerstorage;
-          this.storage.get("alquilerprice").then(price=>{
-            this.AlquilerPrice=price;
+      this.storage.get("serverURL").then(serverURL=>{
+        // this.guidScooter=scooter;
+        // this.storage.get("alquiler").then(alquilerstorage=>{
+          
+          this.http.get(serverURL+"alquileres/find?guid="+alquilerguid,{},{}).then(response=>{
+            console.log(response.data)
+            let responseBody = JSON.parse(response.data);
+            if (responseBody.success.toString()=="true" && responseBody.body){
+              let alquilerinfo = responseBody.body;
+              this.alquiler={
+                guidalquiler : alquilerinfo.guid,
+                duracion : alquilerinfo.duration,
+                precio : alquilerinfo.price,
+                guidscooter : alquilerinfo.guidscooter,
+                cliente : alquilerinfo.cliente,
+                recorrido : alquilerinfo.geometria
+
+              }
+            }
           })
-        })
+        // })
       })
     })
   }

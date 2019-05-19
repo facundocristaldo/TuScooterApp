@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Platform, ToastController, NavController } from '@ionic/angular';
+import { Platform, ToastController, NavController, MenuController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { HTTP } from '@ionic-native/http/ngx';
 import { Time } from '@angular/common';
@@ -32,6 +32,7 @@ export class TravelstatePage implements OnInit {
     private toastController : ToastController,
     private navController:NavController,
     private navParams : ActivatedRoute,
+    private menuCtl:MenuController
   ) { }
 
   ngOnInit() {
@@ -44,7 +45,7 @@ export class TravelstatePage implements OnInit {
     let headers={
       'Accept':'*/*',
       'Content-Type':'application/json',
-      'Timeout':'5000'
+      'Connection-Timeout':'5000'
     }
     
 
@@ -58,18 +59,19 @@ export class TravelstatePage implements OnInit {
     }
     ,headers).then(response=>{
       let responseBody = JSON.parse(response.data);
-      if (responseBody.success=='true'){
+      console.log(responseBody.body)
+      if (responseBody.success.toString()=='true' && responseBody.body!=null){
+        let infoAlquiler = responseBody.body;
         this.toastController.create({
-          message:"Alquiler finalizado con exito",
+          message:"Alquiler finalizado con exito"+JSON.stringify(infoAlquiler),
           duration:3000
         }).then(e=>e.present);
-        let infoAlquiler = responseBody.body;
-        this.platform.ready().then(()=>{
-          this.storage.set("alquilerprice",infoAlquiler.price).then(()=>{
-
-            this.router.navigate(['travelinfo']);
-          });
-        })
+        // this.platform.ready().then(()=>{
+          // this.storage.set("alquilerprice",infoAlquiler.price).then(()=>{
+            this.router.navigate(["/travelinfo",infoAlquiler.guid])
+//            this.navController.navigateForward("/travelinfo")
+          // });
+        // })
       }else{
         this.toastController.create({
           message:"Algo falló",
@@ -93,10 +95,13 @@ export class TravelstatePage implements OnInit {
       this.travelDurationCounter.addSecond();
     }.bind(this),1000)
   }
-
+  ionViewWillLeave(){
+    this.menuCtl.enable(true);
+  }
   ionViewWillEnter(){
     // this.guidScooter = this.navParams.snapshot.paramMap.get('scooter');
     // this.guidAlquiler = this.navParams.snapshot.paramMap.get('alquiler');
+    this.menuCtl.enable(false);
     this.travelStartTime=Date().valueOf().substring(0,25);
     this.platform.ready().then(()=>{
       this.storage.get("userLoginInfo").then((user)=>{
@@ -109,10 +114,10 @@ export class TravelstatePage implements OnInit {
               
               this.guidAlquiler=alquiler;
               // this.alquiler = JSON.parse(alquiler)
-              this.toastController.create({
-                message:"travelstate alquiler:"+this.guidAlquiler,
-                duration:3000
-              }).then(e=>e.present());
+              // this.toastController.create({
+              //   message:"travelstate alquiler:"+this.guidAlquiler,
+              //   duration:3000
+              // }).then(e=>e.present());
 //              console.log("in travelstate guidalquiler is"+this.guidAlquiler);
             });
           });

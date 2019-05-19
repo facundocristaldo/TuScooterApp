@@ -17,45 +17,58 @@ export class HomePage {
   serverURL = "";
 
   startTravel(){
-    this.toastController.create({
-        message:this.serverURL+"users/tiempodisponible?username="+this.username,
-        duration:3000
-      }).then(e=>e.present());
-    this.http.get(this.serverURL+"users/tiempodisponible?username="+this.username,{},{
-      'Accept':'*/*'
-    }).then(response=>{
+  
+    // this.toastController.create({
+    //     message:this.serverURL+"users/tiempodisponible?username="+this.username,
+    //     duration:3000
+    //   }).then(e=>e.present());
+    this.http.get(this.serverURL+"users/tiempodisponible",{
+      username:this.username
+    },{}).then(response=>{
       let responseBody = JSON.parse(response.data);
-      this.toastController.create({
-        message:"HTTPResponse:"+responseBody.body,
-        duration:3000
-      }).then(e=>e.present());
+      // this.toastController.create({
+      //   message:"HTTPResponse:"+responseBody.body,
+      //   duration:3000
+      // }).then(e=>e.present());
       this.platform.ready().then(()=>{
         this.storage.set("maxTimeToTravel",responseBody.body);
-        this.alertController.create({
-          header:"Tiempo máximo para usar el scooter",
-          message:"Usted tiene "+responseBody.body+" segundos máximos para usar el scooter.",
-          buttons:[
+        if(responseBody.body==null || responseBody.body==0){
+          this.alertController.create({
+            header:"Saldo insuficiente",
+            message:"Usted no tiene saldo para realizar un viaje",
+            buttons:[
+              {
+                text:"Aceptar"
+              }
+            ]
+          }).then(e=>e.present());
+        }else{
+
+          this.alertController.create({
+            header:"Tiempo máximo para usar el scooter",
+            message:"Usted tiene "+responseBody.body+" segundos máximos para usar el scooter.",
+            buttons:[
             {
-            text:'Continuar',
-            handler:()=>{
-              this.toastController.create({
-                message:"Aceptado",
-                duration:2000
-              }).then(e=>e.present());
-              this.router.navigate(['qrscanner']);
-              this.isStart=false;
-            }
-          },
-          {
-            text:'Cancelar',
-            handler:()=>{
-              this.toastController.create({
-                message:"Cancelado...",
-                duration:3000
-              }).then(e=>e.present());
-            }
-          }]
-        }).then(alert=>alert.present());
+              text:'Cancelar',
+              handler:()=>{
+                this.toastController.create({
+                  message:"Cancelado...",
+                  duration:3000
+                }).then(e=>e.present());
+              }
+            }, {
+              text:'Continuar',
+              handler:()=>{
+                this.toastController.create({
+                  message:"Aceptado",
+                  duration:2000
+                }).then(e=>e.present());
+                this.router.navigate(['qrscanner']);
+                this.isStart=false;
+              }
+            }]
+          }).then(alert=>alert.present());
+        }
       });
     });    
   }

@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject, forwardRef, ViewChild } from '@angular/core';
 import { MenuController, Platform, AlertController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { HomePage } from '../home/home.page';
 import { Storage } from '@ionic/storage';
 import { HTTP } from '@ionic-native/http/ngx';
 
@@ -41,18 +40,18 @@ export class LoginPage implements OnInit {
       'Content-Type':'application/json',
       'Connection-Timeout':'10000'
     }
-    this.toastCtrl.create({
-      message: "HTTP Request address:"+this.serverURL+"users/login",
-      duration: 3000
-    }).then(e=>e.present());
+    // this.toastCtrl.create({
+    //   message: "HTTP Request address:"+this.serverURL+"users/login",
+    //   duration: 3000
+    // }).then(e=>e.present());
 
     this.http.post(this.serverURL+'users/login?username='+this.usernameInput+'&password='+this.passwordInput,{},headers)
     .then(response=>{
       let responseBody = JSON.parse(response.data);
-      this.toastCtrl.create({
-        message: 'response'+responseBody.body,
-        duration: 3000
-       }).then(e=>e.present());
+      // this.toastCtrl.create({
+      //   message: 'response'+responseBody.body,
+      //   duration: 3000
+      //  }).then(e=>e.present());
       if (responseBody.success.toString()=="true" && responseBody.body!=null){//login ok
         if (responseBody.body){
           let userdata =responseBody.body;
@@ -100,7 +99,7 @@ export class LoginPage implements OnInit {
 
   ionViewWillEnter(){
     // this.login();
-    this.changestyle();
+    // this.changestyle();
     this.menuCtl.enable(false);
     this.platform.ready().then(()=>{
       this.storage.get("serverURL").then(serverURL=>{

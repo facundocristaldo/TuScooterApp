@@ -33,6 +33,24 @@ export class QrscannerPage implements OnInit {
     ){ 
  
   }
+  ionViewWillEnter(){
+    this.menuCtl.enable(false);
+    this.platform.ready().then(()=>{
+      this.storage.get("userLoginInfo").then((user)=>{
+        this.userinfo = user;
+      })
+      this.storage.get("serverURL").then(serverURL=>{
+          this.serverURL= serverURL;
+      });
+    }) 
+    // this.shadowroot.style.background="transparent !important";
+    // //window.document.querySelector('app-root').classList.add('transparentBody');
+   
+  }
+
+  ionViewDidEnter(){
+    this.scanCode();
+  }
 
   scanCode(){
     this.qrScanner.prepare()
@@ -41,24 +59,24 @@ export class QrscannerPage implements OnInit {
        // camera permission was granted
 
        this.toastCtrl.create({
-         message: 'camera permission granted',
+         message: 'Accediendo a la cámara',
          duration: 1000
        }).then(e=>e.present());
        // start scanning
-       this.qrScanner.show();
+      //  this.qrScanner.show();
          let scanSub = this.qrScanner.scan().subscribe((text: string) => {
            
-           console.log('Scanned something', text);
-
-            // hide camera preview
+          // hide camera preview
          //window.document.querySelector('ion-content,.inner-scroll-y').classList.remove('.invisiblebackground');
 
-         this.toastCtrl.create({
-           message: 'You scanned text is this :'+text,
-           duration: 6000
-          }).then(e=>e.present());
+        //  this.toastCtrl.create({
+        //    message: 'You scanned text is this :'+text,
+        //    duration: 6000
+        //   }).then(e=>e.present());
+          this.qrScanner.disableLight();
          scanSub.unsubscribe(); // stop scanning
          this.qrScanner.destroy();
+        //  this.shadowroot.style.removeProperty('background');
          this.conectarScooter(text,this.userinfo.username);
        });
 
@@ -85,32 +103,37 @@ export class QrscannerPage implements OnInit {
 
 
   conectarScooter(guidscooter: string, username: any){
-    let conexion = {
-      'guid': '123',
-      'price': 0.0,
-      'guidscooter': guidscooter,
-      'cliente': username
-    };
-    let headers={
+      // this.toastCtrl.create({
+      //   message:"going to connect to scooter "+guidscooter,
+      //   duration:3000
+      // }).then(e=>e.present());
+
+      this.http.setDataSerializer('json')
+      this.http.post(this.serverURL+'alquileres/alquiler/E',{
+        'guid': '123',
+        'price': 0.0,
+        'guidscooter': guidscooter,
+        'cliente': username
+      },
+      {
       'Accept':'*/*',
       'Content-Type':'application/json',
-      'Timeout':'5000'
+      'Connection-Timeout':'5000'
       }
-      this.http.setDataSerializer('json')
-      this.http.post(this.serverURL+'alquileres/alquiler/E',conexion,headers).then(response=>{
-        this.toastCtrl.create({
-          message:"response "+JSON.stringify(response.data),
-          duration:3000
-        }).then(e=>e.present());
+        ).then(response=>{
+        // this.toastCtrl.create({
+        //   message:"response "+response.data.toString(),
+        //   duration:3000
+        // }).then(e=>e.present());
       let responseBody = JSON.parse(response.data);
-      if (responseBody.success && responseBody.body!=null){
-        let infoAlquiler = JSON.parse(responseBody.body);
+      if (responseBody.success.toString()=="true" && responseBody.body!=null){
+        let infoAlquiler = responseBody.body;
         
         // let guidAlquiler = infoAlquiler.get("guid");
-        this.toastCtrl.create({
-          message:"Conectado al scooter:idAlquiler="+infoAlquiler.guid,
-          duration:5000
-        }).then(e=>e.present());
+        // this.toastCtrl.create({
+        //   message:"Conectado al scooter:idAlquiler="+infoAlquiler.guid,
+        //   duration:5000
+        // }).then(e=>e.present());
         this.qrScanner.hide();
         this.avanzar(infoAlquiler.guid,guidscooter)
       }else{
@@ -132,42 +155,20 @@ export class QrscannerPage implements OnInit {
 } */
 
   ionViewDidLeave(){
-    
+    this.qrScanner.disableLight()
+    this.qrScanner.destroy()
     //window.document.querySelector('*').classList.remove('invisibleAll');
 
   }
-  ionViewWillEnter(){
-    this.menuCtl.enable(false);
-    this.platform.ready().then(()=>{
-      this.storage.get("userLoginInfo").then((user)=>{
-        this.userinfo = user;
-      })
-      this.storage.get("serverURL").then(serverURL=>{
-          this.serverURL= serverURL;
-      });
-    }) 
-    this.shadowroot.style.background="transparent !important";
-    window.document.querySelector('app-root').classList.add('transparentBody');
-   
-  }
+  
 
-  ionViewDidEnter(){
-    this.scanCode();
-  }
+
 
   avanzar(infoalquiler:String,guidScooter:String){
     this.platform.ready().then(()=>{
       this.storage.set("alquiler",infoalquiler).then(()=>{
-
         this.storage.set("scooter",guidScooter).then(()=>{
-          this.storage.get("alquiler").then(gui=>{
-            this.toastCtrl.create({
-              message:"Added to storage alquiler guid:"+gui,
-              duration:10000
-            }).then(e=>e.present());
-          })
           this.navController.navigateForward("/travelstate")
-
         })
       })
     })
@@ -194,7 +195,8 @@ export class QrscannerPage implements OnInit {
         text:"Aceptar",
         handler:data=>{
           if (data.qrcode.trim()!=""){
-            this.conectarScooter(data.qrcode, this.userinfo.username) 
+            let datastring :String = data.qrcode;
+            this.conectarScooter(datastring.toUpperCase(), this.userinfo.username) 
           }else{
             this.alertController.create({
               message:"Ingrese un código",

@@ -13,7 +13,7 @@ export class SaldoPage  implements OnInit {
 
   amount = 0;
   username = "facundotest";
-  saldoActual :String = "0";
+  saldoActual :number=0;
   serverURL = "";
 
   constructor(
@@ -138,9 +138,17 @@ export class SaldoPage  implements OnInit {
             'Timeout':'5000'
           }).then(response=>{
             let responseBody=response.data;
+            this.toastCtrl.create({
+              message:"user:"+responseBody.body.toString(),
+              duration:5000
+            }).then(e=>e.present());
             if (responseBody.body){
               let userinfo = JSON.parse(responseBody.body);
-              this.saldoActual=userinfo.saldo.toString();
+              this.saldoActual=userinfo.saldo;
+              this.toastCtrl.create({
+                message:"saldo"+userinfo.saldo,
+                duration:5000
+              }).then(e=>e.present());
             }
           })
         });
