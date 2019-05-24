@@ -3,7 +3,7 @@ import { QrscannerPage } from '../qrscanner/qrscanner.page';
 import { Router } from '@angular/router';
 import { GoogleMapComponent } from './google-map/google-map.component';
 import { HTTP } from '@ionic-native/http/ngx';
-import { AlertController, Platform, ToastController } from '@ionic/angular';
+import { AlertController, Platform, ToastController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 
 @Component({
@@ -63,7 +63,8 @@ export class HomePage {
                   message:"Aceptado",
                   duration:2000
                 }).then(e=>e.present());
-                this.router.navigate(['qrscanner']);
+                this.navController.navigateRoot("/qrscanner")
+//                this.router.navigate(['/qrscanner']);
                 this.isStart=false;
               }
             }]
@@ -86,6 +87,13 @@ export class HomePage {
       });      
     })
   }
-  constructor(private router: Router, private google:GoogleMapComponent, private http:HTTP,private alertController:AlertController,private platform:Platform,private storage:Storage,private toastController:ToastController){}
+  ionViewWillLeave(){
+    // this.google.map.setDiv(null);
+  }
+  ngOnDestroy(){
+    console.log("destroy home")
+  }
+
+  constructor(private router: Router,private navController:NavController, private google:GoogleMapComponent, private http:HTTP,private alertController:AlertController,private platform:Platform,private storage:Storage,private toastController:ToastController){}
 }
   

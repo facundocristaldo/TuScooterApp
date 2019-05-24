@@ -79,7 +79,7 @@ export class RegisterPage implements OnInit {
       let headers={
         'Content-Type':'application/json',
         'Accept':'*/*',
-        'Timeout':'5000'
+        'Connection-Timeout':'5000'
       }
       this.http.setDataSerializer('json')
       this.http.post(this.serverURL+'users/client/abm/A',

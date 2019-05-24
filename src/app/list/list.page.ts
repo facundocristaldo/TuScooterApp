@@ -23,7 +23,7 @@ export class ListPage implements OnInit {
     private storage:Storage,
     private router:Router
     ) {
-  
+    
   }
  
   ngOnInit() {
@@ -38,30 +38,41 @@ export class ListPage implements OnInit {
         this.serverURL = serverURL;
         this.http.get(this.serverURL+"alquileres/porcliente?username="+this.username,{},{}).then(response=>{
           let responseBody = JSON.parse(response.data);
-          console.log(responseBody)
-          let tempListaAlquileres :any[] = responseBody.body;
-          console.log(tempListaAlquileres)
-          for (var i=0;i<tempListaAlquileres.length;i++){
-            
-            var tempAlquiler:any = tempListaAlquileres[i];
-            var tempfecha :String = tempAlquiler.timestamp;
-            var tempduration : String = tempAlquiler.duration;
-            let alquilertoPush={
-              username: tempAlquiler.cliente,
-              alquilerguid: tempAlquiler.guid,
-              fechaAlquiler: tempfecha.substr(0,18).replace("[a-zA-Z]"," "),
-              precioAlquiler:tempAlquiler.price,
-              duracion:tempduration.substr(12,8).replace("[a-zA-Z]",""),
-              ubicacionesDeReferencia:[]
-            }
-            if (tempAlquiler.geometria){
-              var tempgeometry: any = tempAlquiler.geometria;
-              alquilertoPush.ubicacionesDeReferencia = tempgeometry.puntos
-            }
-            this.alquileres.push(alquilertoPush);
-            
-          }
+          if (responseBody.body!=[] && responseBody.body!=null){
 
+            console.log(responseBody)
+            let tempListaAlquileres :any[] = responseBody.body;
+            console.log(tempListaAlquileres)
+            for (var i=0;i<tempListaAlquileres.length;i++){
+            
+              var tempAlquiler:any = tempListaAlquileres[i];
+              var tempfecha :String = tempAlquiler.timestamp;
+              var tempduration : String = tempAlquiler.duration;
+              let alquilertoPush={
+                username: tempAlquiler.cliente,
+                alquilerguid: tempAlquiler.guid,
+                fechaAlquiler: "",
+                precioAlquiler:tempAlquiler.price,
+                duracion:"",
+                ubicacionesDeReferencia:[]
+              }
+
+              if (tempduration!=undefined && tempduration!=null){
+                alquilertoPush.duracion = tempduration.substr(12,8).replace("[a-zA-Z]","");
+              }
+              if (tempfecha!=undefined && tempfecha!=null){
+                alquilertoPush.fechaAlquiler = tempfecha.substr(0,18).replace("[a-zA-Z]"," ");
+              }
+              
+              if (tempAlquiler.geometria){
+                var tempgeometry: any = tempAlquiler.geometria;
+                alquilertoPush.ubicacionesDeReferencia = tempgeometry.puntos
+              }
+              this.alquileres.push(alquilertoPush);
+            
+            }
+          }
+          
         }).catch(err=>{
           this.toastController.create({
             message:"HTTP Error"+err,
@@ -74,7 +85,9 @@ export class ListPage implements OnInit {
   }
 
   ViewDetails(alquiler){
-    this.router.navigate(["/travelinfo",alquiler.alquilerguid])
+    console.log(alquiler)
+    console.log(JSON.stringify(alquiler))
+    this.router.navigate(["/travelinfo/"+alquiler.alquilerguid])
   }
 }
 

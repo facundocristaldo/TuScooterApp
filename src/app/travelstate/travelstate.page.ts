@@ -25,7 +25,6 @@ export class TravelstatePage implements OnInit {
   // alquiler ;
   // body:any;
   constructor(
-    private router:Router,
     private platform:Platform,
     private storage : Storage,
     private http:HTTP,
@@ -66,12 +65,8 @@ export class TravelstatePage implements OnInit {
           message:"Alquiler finalizado con exito"+JSON.stringify(infoAlquiler),
           duration:3000
         }).then(e=>e.present);
-        // this.platform.ready().then(()=>{
-          // this.storage.set("alquilerprice",infoAlquiler.price).then(()=>{
-            this.router.navigate(["/travelinfo",infoAlquiler.guid])
-//            this.navController.navigateForward("/travelinfo")
-          // });
-        // })
+            // this.navController.navigateRoot(["/redirect/travelinfo/"+infoAlquiler.guid])
+            this.navController.navigateRoot(["/travelinfo/"+infoAlquiler.guid])
       }else{
         this.toastController.create({
           message:"Algo falló",

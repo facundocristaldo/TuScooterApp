@@ -38,7 +38,7 @@ export class LoginPage implements OnInit {
     let headers ={
       'Accept':'*/*',
       'Content-Type':'application/json',
-      'Connection-Timeout':'10000'
+      'Connection-Timeout':'5000'
     }
     // this.toastCtrl.create({
     //   message: "HTTP Request address:"+this.serverURL+"users/login",

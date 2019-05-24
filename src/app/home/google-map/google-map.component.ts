@@ -12,64 +12,124 @@ declare var google;
   templateUrl: './google-map.component.html',
   styleUrls: ['./google-map.component.scss'],
 })
-export class GoogleMapComponent{
+export class GoogleMapComponent {
 
   @Input()
-  isTrack:boolean;
+  isTrack: boolean;
+  @Input()
+  alquiler: "";
+  @Input()
+  showScooters: boolean;
 
   watchPosition = true;
-  map : any;
+  map: any;
   pest: number = 1;
   positionSubscription;
   currentMapTrack;
   trackedRoute;
   isTracking = false;
-  auxLat : number = 0;
-  auxLng : number = 0;
-  auxRadio : number = 300;
-serverURL="";
+  auxLat: number = 0;
+  auxLng: number = 0;
+  auxRadio: number = 300;
+  serverURL = "";
 
-  AgregarMsg : number = 0;
+  AgregarMsg: number = 0;
   formEmp = {
-    Rut : '',
-    Nombre : '',
-    URLocator : '',
-    NombreRubro : '',
-    Direccion : '',
-    Descripcion : '',
-    UserName : '',
-    User : '',
-    Pass : '',
+    Rut: '',
+    Nombre: '',
+    URLocator: '',
+    NombreRubro: '',
+    Direccion: '',
+    Descripcion: '',
+    UserName: '',
+    User: '',
+    Pass: '',
     Logo: '',
     lat: '',
     lng: ''
   }
-  availableScooters : any[]=[];
-  constructor(public platform:Platform, 
-    private geo : Geolocation,
-    private storage:Storage,
-    private http:HTTP,
-    ) {
-    
-  }
-  ngOnInit(){
-    this.platform.ready().then(()=>{
-      
-      let mapOptions={
-        center: {lat: -34.90595, lng: -56.16381749999999},
-        zoom: 13,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        mapTypeControl: false,
-        streetViewControl:false,
-        fullscreenControl:false
+  availableScooters: {guid,latlng:{lat,lng  },bateryLevel}[] = [];
 
+  
+  constructor(public platform: Platform,
+    private geo: Geolocation,
+    private storage: Storage,
+    private http: HTTP,
+  ) { 
+  }
+  ngOnDestroy() {
+    // this.map.setDiv(null);
+    // this.map.unsubscribe();
+    // document.getElementById('map').removeChild;
+    console.log("gogle ng destroy")
+    // this.map=null;
+  }
+
+  ngOnInit() {
+    setTimeout(() => {
+      console.log("gogle ng init")
+      this.platform.ready().then(() => {
+
+        let mapOptions = {
+          center: { lat: -34.90595, lng: -56.16381749999999 },
+          zoom: 13,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: false
+
+        }
+        this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        this.geo.getCurrentPosition().then(data => {
+          this.map.setZoom(17);
+          this.map.setCenter(new google.maps.LatLng(data.coords.latitude, data.coords.longitude));
+        });
+        
+      });
+      console.log("google map will enter")
+      this.platform.ready().then(() => {
+        this.storage.get("serverURL").then(data => {
+          this.serverURL = data;
+        }).then(() => {
+          this.http.setDataSerializer('json');
+          this.http.get(this.serverURL + "scooter/disponibles", {}, {}).then(response => {
+            console.log("scooters disponibles response:->" + response.data)
+            let responseBody = JSON.parse(response.data)
+            if (responseBody.body) {
+              let tempScooterArray: any = responseBody.body;
+              console.log("responsebody:" + tempScooterArray.length)
+              this.availableScooters = [];
+              tempScooterArray.forEach(onescooter => {
+                let geometry = onescooter.geometria;
+                console.log("geometria " +geometry)
+                this.availableScooters.push({
+                  "guid": onescooter.guid,
+                  "bateryLevel": onescooter.bateryLevel,
+                  "latlng": geometry.puntos[0],
+                })
+                console.log("cantidad scooters cargados= " + this.availableScooters.length)
+              });
+
+                console.log(this.availableScooters)
+                if (this.showScooters) {
+                  setTimeout(()=>{
+                    console.log("show scooters")
+                    this.drawScootersinMap();
+                    
+                  },200);
+                }
+              
+            }
+          })
+        })
+      })
+      if (this.isTrack) {
+        console.log("is track")
       }
-      this.map = new google.maps.Map(document.getElementById('map'), mapOptions);     
-       this.geo.getCurrentPosition().then(data=>{
-         this.map.setZoom(17);
-         this.map.setCenter(new google.maps.LatLng(data.coords.latitude,data.coords.longitude));
-       });
-       this.drawScootersinMap();
+      if (this.alquiler != "" && this.alquiler != undefined) {
+        console.log("alquiler |" + this.alquiler + "|")
+      }
+      
       //  if (this.isTrack ){
       //     if (!this.isTracking){
       //       console.log("Start tracking");
@@ -85,86 +145,80 @@ serverURL="";
       //           console.log("user position:("+data.coords.latitude+","+data.coords.longitude+")");
       //           this.map.setZoom(17);
       //           this.map.setCenter(new google.maps.LatLng(data.coords.latitude,data.coords.longitude));
-                
+
       //           this.drawPath(this.trackedRoute);
       //         });
       //       }); 
       //   }
-    });
+    }, 100);
+
+  }
+
+  drawScootersinMap() {
     
-  }
-
-  drawScootersinMap(){
+    var image = {
+      url: "https://i.imgur.com/4PCncWk.png",
+      size: new google.maps.Size(20, 32),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(0, 32)
+    };
+    var shape = {
+      coords: [1, 1, 1, 20, 18, 20, 18, 1],
+      type: 'poly'
+    };
     this.availableScooters.forEach(onescooter => {
-
       let scootermarker = new google.maps.Marker({
+        animation: google.maps.Animation.DROP,
         map: this.map,
-        position: new google.maps.LatLng(onescooter.latlng.lat.onescooter.latlng.lng),
-        icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            fillColor: '#00F',
-            fillOpacity: 0.6,
-            strokeColor: '#00A',
-            strokeOpacity: 0.9,
-            strokeWeight: 1,
-            scale: 3
-          }
-        });
+        position: new google.maps.LatLng(onescooter.latlng.lat,onescooter.latlng.lng),
+        icon: image,
+        shape: shape,strokeColor: '#00A',
+        strokeOpacity: 0.9,
+        strokeWeight: 1,
+ /*       {
+          path: image.src,//google.maps.SymbolPath.CIRCLE,
+          fillColor: '#00F',
+          fillOpacity: 0.6,
+          
+          scale: 3
+        }
+      */   });
     });
   }
 
-  drawPath(path){
-    if(this.currentMapTrack){
+  drawPath(path) {
+    if (this.currentMapTrack) {
       this.currentMapTrack.setMap(null);
     }
-    
-    if(path.length>1){
+
+    if (path.length > 1) {
       this.currentMapTrack = new google.maps.Polyline({
-        path:path,
+        path: path,
         geodesic: true,
         strokeColor: "#ff00ff",
-        strokeOpacity:1.0,
-        strokeWeight:3
+        strokeOpacity: 1.0,
+        strokeWeight: 3
       });
       this.currentMapTrack.setMap(this.map);
     }
   }
 
-  stopTracking(){
+  stopTracking() {
     console.log("Stop tracking");
-    let newRoute = {finished: new Date().getTime(),path:this.trackedRoute};
+    let newRoute = { finished: new Date().getTime(), path: this.trackedRoute };
     this.isTracking = false;
     this.positionSubscription.unsubscribe();
     this.currentMapTrack.setMap(null);
   }
 
-  ionViewWillEnter(){
-    this.platform.ready().then(()=>{
-      this.storage.get("serverURL").then(data=>{
-        this.serverURL=data;
-      }).then(()=>{
-        this.http.setDataSerializer('json');
-        this.http.get(this.serverURL+"scooter/disponibles",{},{}).then(response=>{
-          console.log(response.data)
-          let tempScooterArray = response.data;
-          this.availableScooters = [];
-          tempScooterArray.forEach(onescooter=> {
-            let geometry = onescooter.geometria;
-            this.availableScooters.push({
-              guid:onescooter.guid,
-              bateryLevel:onescooter.bateryLevel,
-              latlng:geometry.puntos[0]
-            })
-          });
-        })
-      })
-    })
-  }
 
-  ionViewWillLeave(){
-    this.stopTracking();
-    //this.positionSubscription.unsubscribe();
-  }
+  // ionViewWillLeave(){
+  //   this.stopTracking();
+  //   this.map.setDiv(null);
+  //   this.map.unsubscribe();
+  //   google = null
+  //   //this.positionSubscription.unsubscribe();
+  // }
 }
 /*[
     {
@@ -212,4 +266,4 @@ serverURL="";
         "isAvailable": true,
         "isRented": false
     }
-]*/ 
+]*/

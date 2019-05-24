@@ -62,7 +62,7 @@
       </ion-item> -->
     </ion-list>
     <div id="btnArea">
-      <ion-button expand="block" id="registerBtn" (click)="register()" [disabled]="formgroup.invalid" >Registrarse</ion-button>
+      <ion-button expand="block" id="registerBtn" (click)="register()" [disabled]="formgroup.invalid || confPasswordInput.value!=passwordInput.value" >Registrarse</ion-button>
       
       <div id="noAccountYet">
         <ion-label>

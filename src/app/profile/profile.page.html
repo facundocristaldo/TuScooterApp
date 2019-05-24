@@ -1,13 +1,58 @@
 <ion-header>
   <ion-toolbar>
-      <ion-buttons slot="start">
-          <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-    <ion-title>profile</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Perfil</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <div id="profileForm" class="form">
+    <div class="FormAttribute" id="profilePhoto" (click)="pickImage()">
+      <img (click)="selectImage()" *ngIf="userinfo.urlphoto" [src]="userinfo.urlphoto"/>
+    </div>
+    <form  [formGroup]="formgroup">
+      <ion-list>
+        <ion-item lines="none" id="nameSurname">
+          <ion-item class="FormAttribute">
+            <ion-label class="AttrLabel">Nombre</ion-label>
+            <ion-input placeholder="Joe" type="text" formControlName="name" [(ngModel)]="userinfo.name"></ion-input>
+            <ion-icon name="create" (click)="toggleEnable('name')" class="editBtn"></ion-icon>
+          </ion-item>
+          <ion-item class="FormAttribute">
+            <ion-label class="AttrLabel">Apellido</ion-label>
+            <ion-input placeholder="Doe" type="text" formControlName="surname" [(ngModel)]="userinfo.surname"></ion-input>
+            <ion-icon name="create" (click)="toggleEnable('surname')" class="editBtn"></ion-icon>
+          </ion-item>
+        </ion-item>
+        <ion-item class="FormAttribute">
+          <ion-label class="AttrLabel">Nickname</ion-label>
+          <ion-input disabled="true" >{{userinfo.username}}</ion-input>
+        </ion-item>
+        <ion-item class="FormAttribute">
+          <ion-label class="AttrLabel">Email</ion-label>
+          <ion-input placeholder="joedoe@email.com" type="email" formControlName="email" [(ngModel)]="userinfo.email"></ion-input>
+          <ion-icon name="create" (click)="toggleEnable('email')" class="editBtn"></ion-icon>
+        </ion-item>
+        <ion-item class="FormAttribute">
+          <ion-label class="AttrLabel">Contraseña</ion-label>
+          <ion-input placeholder="********" name="password" type="password" formControlName="password" [(ngModel)]="userinfo.password"></ion-input>
+          <ion-icon name="create" (click)="toggleEnable('password');toggleEnable('confirmPassword');" class="editBtn"></ion-icon>
+        </ion-item>
+        <ion-item class="FormAttribute" *ngIf="confirmPassword.enabled">
+          <ion-label class="AttrLabel">Repetir contraseña</ion-label>
+          <ion-input placeholder="********" name="confirmPassword" type="password" formControlName="confirmPassword" [(ngModel)]="confirmPassword.value"></ion-input>
+        </ion-item>
+        <ion-item class="FormAttribute">
+          <ion-label class="AttrLabel">Celular</ion-label>
+          <ion-input placeholder="0910123534" type="number" formControlName="cellphone" [(ngModel)]="userinfo.cellphone"></ion-input>
+          <ion-icon name="create" (click)="toggleEnable('cellphone')" class="editBtn"></ion-icon>
+        </ion-item>
+      </ion-list>
+      <div id="btnArea">
+        <ion-button expand="block" id="registerBtn" (click)="actualizarAction()" [disabled]="formgroup.invalid">Actualizar</ion-button>
+      </div>
+    </form>
+  </div>
 </ion-content>
- 

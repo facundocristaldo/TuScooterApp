@@ -11,6 +11,7 @@ import { TravelstatePage } from './travelstate/travelstate.page';
 import { SaldoPage } from './saldo/saldo.page';
 import { ChangeipPage } from './changeip/changeip.page';
 
+
 const routes: Routes = [
   { path: '',             redirectTo: 'login', pathMatch: 'full' },
   { path: 'login',        component: LoginPage },
@@ -22,7 +23,7 @@ const routes: Routes = [
   { path: 'travelinfo/:id',   component: TravelinfoPage },
   { path: 'travelstate',  component: TravelstatePage},
   { path: 'saldo',        component: SaldoPage },
-  { path: 'changeip', component: ChangeipPage }
+  { path: 'changeip', component: ChangeipPage },
 ];
  
 @NgModule({

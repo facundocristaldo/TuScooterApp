@@ -54,9 +54,7 @@ export class ChangeipPage implements OnInit {
     });
   }
 
-  goback(){
-    this.navController.pop();
-  }
+ 
   ionViewWillEnter(){
     this.menuCtl.enable(false);
   }

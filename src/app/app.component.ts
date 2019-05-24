@@ -60,6 +60,7 @@ export class AppComponent {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
       this.backgroundmode.enable();
+      this.platform.backButton.unsubscribe();
     });
   }
   

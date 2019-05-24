@@ -65,7 +65,7 @@ export class SaldoPage  implements OnInit {
               this.http.post(this.serverURL+"users/recargar?username="+this.username+"&guidpaypal="+paymentdata.id+"&monto="+this.amount+"&moneda=USD",{},{
               'Accept':'*/*',
               'content-Type':'application/json',
-              'Timeout':'5000'
+              'Connection-Timeout':'5000'
             }).then(response=>{
               let responseBody= JSON.parse(response.data);
               if (responseBody.body=="true" || responseBody.body==true){
@@ -73,6 +73,7 @@ export class SaldoPage  implements OnInit {
                   message: "El pago se guardó correctamente",
                   duration: 3000
                 }).then(e=>e.present());
+                this.refreshPage()
               }else{
                 this.toastCtrl.create({
                   message: "Algo salió mal",
@@ -125,31 +126,42 @@ export class SaldoPage  implements OnInit {
   }
 
   ionViewWillEnter(){
+    this.refreshPage();
+  }
+  doRefresh(event){
+    console.log('Begin async operation');
+    
+    this.refreshPage();
+    event.target.complete();
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 5000);
+  }
+  refreshPage(){
 
     this.platform.ready().then(()=>{
       this.storage.get("serverURL").then(serverURL=>{
         this.serverURL= serverURL;
         this.storage.get("userLoginInfo").then(data=>{
           this.saldoActual = data.saldo
-          this.username = data.username;
-          this.http.get(this.serverURL+"users/cliente?username="+this.username,{},{
-            'Accept':'*/*',
-            'Content-Type':'application/json',
-            'Timeout':'5000'
-          }).then(response=>{
-            let responseBody=response.data;
+        this.username = data.username;
+        this.http.get(this.serverURL+"users/cliente?username="+this.username,{},{}).then(response=>{
+          let responseBody=JSON.parse(response.data);
+          
+          if (responseBody.body){
+            let userinfo = responseBody.body;
+            this.saldoActual=userinfo.saldo;
             this.toastCtrl.create({
-              message:"user:"+responseBody.body.toString(),
+              message:"saldo"+userinfo.saldo,
               duration:5000
             }).then(e=>e.present());
-            if (responseBody.body){
-              let userinfo = JSON.parse(responseBody.body);
-              this.saldoActual=userinfo.saldo;
-              this.toastCtrl.create({
-                message:"saldo"+userinfo.saldo,
-                duration:5000
-              }).then(e=>e.present());
-            }
+          }else{
+            this.toastCtrl.create({
+              message:responseBody.message.toString(),
+              duration:5000
+            }).then(e=>e.present());
+          }
           })
         });
       });

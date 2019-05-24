@@ -168,7 +168,7 @@ export class QrscannerPage implements OnInit {
     this.platform.ready().then(()=>{
       this.storage.set("alquiler",infoalquiler).then(()=>{
         this.storage.set("scooter",guidScooter).then(()=>{
-          this.navController.navigateForward("/travelstate")
+          this.navController.navigateRoot("/travelstate")
         })
       })
     })
@@ -210,7 +210,7 @@ export class QrscannerPage implements OnInit {
 
 
   goback(){
-    this.navController.pop();
+    this.navController.navigateRoot("/home")
   }
 
 }

@@ -1,1 +1,15 @@
- 
+ion-input>input {
+    opacity:1 !important;
+ }
+ div#saldoBox {
+    width: 80%; 
+    height: 150px; 
+    position: absolute;
+    left: 50%; 
+    margin-left: -40%; 
+    top: 50%;
+    margin-top: -130px;
+    -moz-box-shadow: 1px 1px 30px -6px #ccc;
+    -webkit-box-shadow: 1px 1px 30px -6px #ccc;
+    box-shadow: 1px 1px 30px -6px #ccc;
+}

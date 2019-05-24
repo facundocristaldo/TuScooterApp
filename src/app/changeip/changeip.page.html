@@ -1,16 +1,16 @@
 <ion-header>
   <ion-toolbar>
-      <ion-title>
-        <ion-icon style="font-size: 2.4pc;margin-left: 0.3pc;" left icon-only name="arrow-round-back" (click)="goback()"></ion-icon>
-        <ion-label style="position: relative;top: -12px">Cambiar ubicación del servidor</ion-label>
-      </ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Servidor</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-card id="changeipportcard">
     <ion-item>
-      <ion-label>ServerIP/Nombre</ion-label>
+      <ion-label>IP o Nombre</ion-label>
       <ion-input [(ngModel)]="IP" placeholder="IP/Name"></ion-input>
     </ion-item>
     <ion-item>

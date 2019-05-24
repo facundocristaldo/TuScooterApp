@@ -27,6 +27,7 @@ import { TravelinfoPage } from './travelinfo/travelinfo.page';
 import { IonicStorageModule } from '@ionic/storage';
 import { ChangeipPage } from './changeip/changeip.page';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
+import { ImagePicker } from '@ionic-native/image-picker/ngx';
 
 @NgModule({
   declarations: [AppComponent,
@@ -41,7 +42,6 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
   RegisterPage,
   SaldoPage,
   ChangeipPage,
-
   ],
   entryComponents: [
     AppComponent,
@@ -55,7 +55,8 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
     LoginPage,
     ListPage,
     RegisterPage,
-    SaldoPage,],
+    SaldoPage,
+  ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -74,6 +75,7 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
     Geolocation,
     GoogleMapComponent,
     BackgroundMode,
+    ImagePicker
   ],
   bootstrap: [AppComponent]
 })
