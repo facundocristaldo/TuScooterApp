@@ -3,7 +3,7 @@ import { QrscannerPage } from '../qrscanner/qrscanner.page';
 import { Router } from '@angular/router';
 import { GoogleMapComponent } from './google-map/google-map.component';
 import { HTTP } from '@ionic-native/http/ngx';
-import { AlertController, Platform, ToastController, NavController } from '@ionic/angular';
+import { AlertController, Platform, ToastController, NavController, MenuController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 
 @Component({
@@ -59,10 +59,6 @@ export class HomePage {
             }, {
               text:'Continuar',
               handler:()=>{
-                this.toastController.create({
-                  message:"Aceptado",
-                  duration:2000
-                }).then(e=>e.present());
                 this.navController.navigateRoot("/qrscanner")
 //                this.router.navigate(['/qrscanner']);
                 this.isStart=false;
@@ -78,6 +74,7 @@ export class HomePage {
     this.isStart=true;
   }
   ionViewWillEnter(){
+    this.menuController.enable(true);
     this.platform.ready().then(()=>{
       this.storage.get("userLoginInfo").then(data=>{
         this.username = data.username;
@@ -94,6 +91,6 @@ export class HomePage {
     console.log("destroy home")
   }
 
-  constructor(private router: Router,private navController:NavController, private google:GoogleMapComponent, private http:HTTP,private alertController:AlertController,private platform:Platform,private storage:Storage,private toastController:ToastController){}
+  constructor(private router: Router,private navController:NavController, private google:GoogleMapComponent, private http:HTTP,private alertController:AlertController,private platform:Platform,private storage:Storage,private toastController:ToastController,private menuController:MenuController){}
 }
   

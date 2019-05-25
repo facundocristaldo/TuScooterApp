@@ -14,13 +14,10 @@ export class QrscannerPage implements OnInit {
   userinfo;
   isTest=true;
   serverURL="";
-  @ViewChild('shadow-root') shadowroot:HTMLElement;
   lightEnabled: any;
 
   ngOnInit() {
-    
   }
-
   constructor(
     private qrScanner: QRScanner,
     private navController:NavController,
@@ -43,42 +40,23 @@ export class QrscannerPage implements OnInit {
           this.serverURL= serverURL;
       });
     }) 
-    // this.shadowroot.style.background="transparent !important";
     // //window.document.querySelector('app-root').classList.add('transparentBody');
    
   }
 
   ionViewDidEnter(){
-    this.scanCode();
-  }
-
-  scanCode(){
     this.qrScanner.prepare()
    .then((status: QRScannerStatus) => {
      if (status.authorized) {
-       // camera permission was granted
+       this.qrScanner.show().then(status=>{
 
-       this.toastCtrl.create({
-         message: 'Accediendo a la cámara',
-         duration: 1000
-       }).then(e=>e.present());
-       // start scanning
-      //  this.qrScanner.show();
-         let scanSub = this.qrScanner.scan().subscribe((text: string) => {
-           
-          // hide camera preview
-         //window.document.querySelector('ion-content,.inner-scroll-y').classList.remove('.invisiblebackground');
-
-        //  this.toastCtrl.create({
-        //    message: 'You scanned text is this :'+text,
-        //    duration: 6000
-        //   }).then(e=>e.present());
-          this.qrScanner.disableLight();
-         scanSub.unsubscribe(); // stop scanning
-         this.qrScanner.destroy();
-        //  this.shadowroot.style.removeProperty('background');
-         this.conectarScooter(text,this.userinfo.username);
-       });
+          let scanSub = this.qrScanner.scan().subscribe((text: string) => {
+            this.qrScanner.disableLight();
+            scanSub.unsubscribe(); // stop scanning
+            this.qrScanner.destroy();
+            this.conectarScooter(text,this.userinfo.username);
+          });
+        })
 
 
      } else if (status.denied) {
@@ -86,18 +64,15 @@ export class QrscannerPage implements OnInit {
          message: 'No hay acceso a la camara',
          duration: 3000
         }).then(e=>e.present());
-       // camera permission was permanently denied
-       // you must use QRScanner.openSettings() method to guide the user to the settings page
-       // then they can grant the permission from there
+
      } else {
        this.toastCtrl.create({
          message: 'Sin acceso a la camara.',
          duration: 3000
         }).then(e=>e.present());
-       // permission was denied, but not permanently. You can ask for permission again at a later time.
      }
    })
-   .catch((e: any) => console.log('Error is', e));
+   .catch((e: any) => console.log('Error ', e));
 
   }
 
