@@ -40,18 +40,9 @@ export class LoginPage implements OnInit {
       'Content-Type':'application/json',
       'Connection-Timeout':'5000'
     }
-    // this.toastCtrl.create({
-    //   message: "HTTP Request address:"+this.serverURL+"users/login",
-    //   duration: 3000
-    // }).then(e=>e.present());
-
     this.http.post(this.serverURL+'users/login?username='+this.usernameInput+'&password='+this.passwordInput,{},headers)
     .then(response=>{
       let responseBody = JSON.parse(response.data);
-      // this.toastCtrl.create({
-      //   message: 'response'+responseBody.body,
-      //   duration: 3000
-      //  }).then(e=>e.present());
       if (responseBody.success.toString()=="true" && responseBody.body!=null){//login ok
         if (responseBody.body){
           let userdata =responseBody.body;
@@ -98,8 +89,6 @@ export class LoginPage implements OnInit {
   }
 
   ionViewWillEnter(){
-    // this.login();
-    // this.changestyle();
     this.menuCtl.enable(false);
     this.platform.ready().then(()=>{
       this.storage.get("serverURL").then(serverURL=>{

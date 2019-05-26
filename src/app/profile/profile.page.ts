@@ -12,10 +12,10 @@ import { ImagePicker } from '@ionic-native/image-picker/ngx';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit {
-  json="";
+  json = "";
   serverURL = "";
-  userinfo ={cellphone:"",email:"",name:"",saldo:0.0,surname:"",urlphoto:"",username:"",password:""};
-  base64img="";
+  userinfo = { cellphone: "", email: "", name: "", saldo: 0.0, surname: "", urlphoto: "", username: "", password: "" };
+  base64img = "";
   formgroup: FormGroup;
   confirmPassword: AbstractControl;
   password: AbstractControl;
@@ -23,7 +23,7 @@ export class ProfilePage implements OnInit {
   name: AbstractControl;
   surname: AbstractControl;
   cellphone: AbstractControl;
-  
+
   constructor(
     private storage: Storage,
     private http: HTTP,
@@ -33,7 +33,6 @@ export class ProfilePage implements OnInit {
     private toastController: ToastController,
 
   ) {
-    console.log("works till this")
     this.formgroup = formBuilder.group({
       name: ['', [Validators.required]],
       surname: ['', [Validators.required]],
@@ -42,7 +41,6 @@ export class ProfilePage implements OnInit {
       cellphone: ['', []],
       confirmPassword: ['', []]
     })
-    console.log("works till this")
     this.name = this.formgroup.controls["name"];
     this.surname = this.formgroup.controls["surname"];
     this.password = this.formgroup.controls["password"];
@@ -62,27 +60,46 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillEnter() {
-    console.log("enter")
+    this.refreshPage()
+  }
+
+  async doRefresh(event) {
+    let ret = false;
+    ret = await this.refreshPage();
+    console.log(ret)
+    event.target.complete();
+
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      event.target.complete();
+    }, 3000);
+  }
+
+  async refreshPage(): Promise<any> {
     this.platform.ready().then(() => {
-      console.log("platform ready")
       this.storage.get("serverURL").then(serverURL => {
         this.serverURL = serverURL;
-        console.log("serverurl " + serverURL)
         this.storage.get("userLoginInfo").then(userinfo => {
-          console.log("userinfor = " + userinfo)
-          
-          this.http.get(this.serverURL + "users/cliente?username="+userinfo.username,{}, {}).then(response => {
-            console.log(response.data)
+          this.http.get(this.serverURL + "users/cliente?username=" + userinfo.username, {}, {}).then(response => {
             let responseBody = JSON.parse(response.data);
             if (responseBody.body) {
               this.userinfo = responseBody.body;
+              this.formgroup.get("name").disable();
+              this.formgroup.get("surname").disable();
+              this.formgroup.get("email").disable();
+              this.formgroup.get("password").disable();
+              this.formgroup.get("confirmpassword").disable();
+              this.formgroup.get("cellphone").disable();
               this.confirmPassword.setValue(responseBody.body.password);
+              return true;
             }
           })
         })
       })
     })
+    return false;
   }
+
 
   pickImage() {
     const options = {
@@ -100,14 +117,14 @@ export class ProfilePage implements OnInit {
         this.toastController.create({
           message: "IMAGE:" + base64Img,
           duration: 5000
-        }).then(e => e.present().then(()=>{
+        }).then(e => e.present().then(() => {
           this.toastController.create({
             message: "IMAGE1:" + results[i],
             duration: 5000
           }).then(e => e.present());
         }));
 
-        this.userinfo.urlphoto=results[i];
+        this.userinfo.urlphoto = results[i];
         this.base64img = base64Img;
       }
     }, (err) => {
@@ -119,75 +136,76 @@ export class ProfilePage implements OnInit {
   }
 
   actualizarAction() {
-    if (this.password.value!==this.confirmPassword.value){
+    
+    if ( (this.formgroup.get("password").enable) && this.password.value !== this.confirmPassword.value) {
       this.toastController.create({
-        message:"Las contraseñas deben coincidir",
-        duration:3000,
-      }).then(e=>e.present());
-    }else{
+        message: "Las contraseñas deben coincidir",
+        duration: 3000,
+      }).then(e => e.present());
+    } else {
 
       this.http.setDataSerializer("json")
       this.http.post(this.serverURL + "users/client/abm/M", {
-      "username": this.userinfo.username,
-      "password": this.password.value,
-      "email": this.email.value,
-      "name": this.name.value,
-      "surname": this.surname.value,
-      "cellphone": this.cellphone.value,
-      "urlphoto": this.base64img
-    }, {
-      'Content-Type': 'application/json',
-      'Accept': '*/*',
-      'Connection-Timeout': '5000'
-    }).then(response => {
-      if (response.status == 200 && response.data) {
-        let responseBody = JSON.parse(response.data);
-          if (responseBody.success == true && responseBody.body == true) {
+        "username": this.userinfo.username,
+        "password": this.password.value,
+        "email": this.email.value,
+        "name": this.name.value,
+        "surname": this.surname.value,
+        "cellphone": this.cellphone.value,
+        "urlphoto": this.base64img
+      }, {
+          'Content-Type': 'application/json',
+          'Accept': '*/*',
+          'Connection-Timeout': '5000'
+        }).then(response => {
+          if (response.status == 200 && response.data) {
+            let responseBody = JSON.parse(response.data);
+            if (responseBody.success == true && responseBody.body == true) {
+              this.toastController.create({
+                message: 'Información Actualizada',
+                duration: 3000
+              }).then(e => e.present());
+              if (this.userinfo.password.trim() != "") {
+                this.platform.ready().then(() => {
+                  let userLoginInfo = {
+                    username: this.userinfo.username,
+                    password: this.password.value,
+                  }
+                  this.storage.set('userLoginInfo', userLoginInfo);
+                });
+              }
+
+            } else {
+              this.toastController.create({
+                message: 'Algo salió mal',
+                duration: 3000
+              }).then(e => e.present());
+            }
+          } else if (response.status != 200) {//error de validacion
             this.toastController.create({
-              message: 'Información Actualizada',
+              message: 'Algo salió mal',
               duration: 3000
             }).then(e => e.present());
-            if (this.userinfo.password.trim() != "") {
-              this.platform.ready().then(() => {
-                let userLoginInfo = {
-                  username: this.userinfo.username,
-                  password: this.password.value,
-                }
-                this.storage.set('userLoginInfo', userLoginInfo);
-              });
-            }
-            
-          }else{
+          } else { //usuario no existe
             this.toastController.create({
               message: 'Algo salió mal',
               duration: 3000
             }).then(e => e.present());
           }
-        } else if (response.status !=200) {//error de validacion
+        }).catch(err => {
           this.toastController.create({
-            message: 'Algo salió mal',
+            message: 'Algo salió mal :' + err.data,
             duration: 3000
           }).then(e => e.present());
-        } else { //usuario no existe
-          this.toastController.create({
-            message: 'Algo salió mal',
-            duration: 3000
-          }).then(e => e.present());
-        }
-      }).catch(err => {
-        this.toastController.create({
-          message: 'Algo salió mal :' + err.data,
-          duration: 3000
-        }).then(e => e.present());
-      });
+        });
     }
   }
-    
-    
-  toggleEnable(name:string){
-    if (this.formgroup.get(name).enabled){
+
+
+  toggleEnable(name: string) {
+    if (this.formgroup.get(name).enabled) {
       this.formgroup.get(name).disable()
-    }else{
+    } else {
       this.formgroup.get(name).enable()
     }
   }

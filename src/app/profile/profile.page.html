@@ -8,6 +8,9 @@
 </ion-header>
 
 <ion-content>
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
   <div id="profileForm" class="form">
     <div class="FormAttribute" id="profilePhoto" (click)="pickImage()">
       <img (click)="selectImage()" *ngIf="userinfo.urlphoto" [src]="userinfo.urlphoto"/>
@@ -50,6 +53,7 @@
           <ion-icon name="create" (click)="toggleEnable('cellphone')" class="editBtn"></ion-icon>
         </ion-item>
       </ion-list>
+      
       <div id="btnArea">
         <ion-button expand="block" id="registerBtn" (click)="actualizarAction()" [disabled]="formgroup.invalid">Actualizar</ion-button>
       </div>

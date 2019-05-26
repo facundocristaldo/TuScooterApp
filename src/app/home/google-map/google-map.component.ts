@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Platform, ToastController } from '@ionic/angular';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { filter } from 'rxjs/operators';
 import { Storage } from '@ionic/storage';
@@ -55,6 +55,7 @@ export class GoogleMapComponent {
     private geo: Geolocation,
     private storage: Storage,
     private http: HTTP,
+    private toastController:ToastController
   ) { 
   }
   ngOnDestroy() {
@@ -67,8 +68,14 @@ export class GoogleMapComponent {
 
   ngOnInit() {
     setTimeout(() => {
-      console.log("gogle ng init")
-      this.platform.ready().then(() => {
+      this.cargarmapa();
+    }, 300);
+
+  }
+
+  async cargarmapa(){
+    console.log("gogle ng init")
+      await this.platform.ready().then(() => {
 
         let mapOptions = {
           center: { lat: -34.90595, lng: -56.16381749999999 },
@@ -80,10 +87,7 @@ export class GoogleMapComponent {
 
         }
         this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-        this.geo.getCurrentPosition().then(data => {
-          this.map.setZoom(17);
-          this.map.setCenter(new google.maps.LatLng(data.coords.latitude, data.coords.longitude));
-        });
+        
         
       });
       console.log("google map will enter")
@@ -91,99 +95,141 @@ export class GoogleMapComponent {
         this.storage.get("serverURL").then(data => {
           this.serverURL = data;
         }).then(() => {
-          this.http.setDataSerializer('json');
-          this.http.get(this.serverURL + "scooter/disponibles", {}, {}).then(response => {
-            console.log("scooters disponibles response:->" + response.data)
-            let responseBody = JSON.parse(response.data)
-            if (responseBody.body) {
-              let tempScooterArray: any = responseBody.body;
-              console.log("responsebody:" + tempScooterArray.length)
-              this.availableScooters = [];
-              tempScooterArray.forEach(onescooter => {
-                let geometry = onescooter.geometria;
-                console.log("geometria " +geometry)
-                this.availableScooters.push({
-                  "guid": onescooter.guid,
-                  "bateryLevel": onescooter.bateryLevel,
-                  "latlng": geometry.puntos[0],
-                })
-                console.log("cantidad scooters cargados= " + this.availableScooters.length)
-              });
-
-                console.log(this.availableScooters)
-                if (this.showScooters) {
-                  setTimeout(()=>{
-                    console.log("show scooters")
-                    this.drawScootersinMap();
-                    
-                  },200);
-                }
-              
+          if (this.showScooters){
+            console.log("show scooters")
+            this.drawScootersinMap();
+          }
+          if (this.isTrack) {
+            console.log("is track")
+            if (!this.isTracking){
+              console.log("Start tracking");
+              this.trackedRoute = []
+              this.isTracking = true;
             }
-          })
+            this.positionSubscription = this.geo.watchPosition()
+              .pipe(
+                filter(p=> p.coords!==undefined)
+              )
+              .subscribe(data=>{
+                setTimeout(()=>{
+                  console.log("user position:("+data.coords.latitude+","+data.coords.longitude+")");
+                  this.map.setZoom(17);
+                  this.map.setCenter(new google.maps.LatLng(data.coords.latitude,data.coords.longitude));
+  
+                  this.drawPath(this.trackedRoute);
+                });
+              }); 
+          }
+          if (this.alquiler != "" && this.alquiler != undefined) {
+            console.log("alquiler |" + this.alquiler + "|")
+            this.http.get(this.serverURL+"alquileres/find?guid="+this.alquiler,{},{}).then(response=>{
+              console.log("alquiler return->"+response.data)
+              let responseBody = JSON.parse(response.data)
+              if (responseBody && responseBody.body!=null){
+                var travelcoordinates = responseBody.body.geometria.puntos
+                var recorrido = new google.maps.Polyline({
+                  path: travelcoordinates,
+                  geodesic: true,
+                  strokeColor: '#5ABE2E  ',
+                  strokeOpacity: 1.0,
+                  strokeWeight: 4
+                });
+                recorrido.setMap(this.map);
+                var bounds = new google.maps.LatLngBounds();
+                for (var i = 0; i < travelcoordinates.length; i++) {
+                  bounds.extend(travelcoordinates[i]);
+                }
+                
+                // The Center of the Bermuda Triangle - (25.3939245, -72.473816)
+                console.log(bounds.getCenter());
+                this.map.setCenter(bounds.getCenter());
+                this.map.setZoom(15);
+              }
+    
+            });
+          }
+
+          if (this.isTrack || this.showScooters){
+            this.http.get(this.serverURL+"scooter/obtenerArea",{},{}).then(response=>{
+              if (response.status!=200 || response.data==null){
+                this.toastController.create({
+                  message:"Error al obtener área permitida.",
+                  duration:3000
+                }).then(e=>e.present());
+              }else{
+                let responseBody = JSON.parse(response.data)
+                let areaCoords= responseBody.body.puntos;
+                var bermudaTriangle = new google.maps.Polygon({
+                  paths: areaCoords,
+                  strokeColor: '#77DD77',
+                  strokeOpacity: 0.4,
+                  strokeWeight: 0.1,
+                  fillColor: '#77DD77',
+                  fillOpacity: 0.1
+                });
+                bermudaTriangle.setMap(this.map);
+              }
+            });
+          }
         })
       })
-      if (this.isTrack) {
-        console.log("is track")
-      }
-      if (this.alquiler != "" && this.alquiler != undefined) {
-        console.log("alquiler |" + this.alquiler + "|")
-      }
-      
-      //  if (this.isTrack ){
-      //     if (!this.isTracking){
-      //       console.log("Start tracking");
-      //       this.trackedRoute = []
-      //       this.isTracking = true;
-      //     }
-      //     this.positionSubscription = this.geo.watchPosition()
-      //       .pipe(
-      //         filter(p=> p.coords!==undefined)
-      //       )
-      //       .subscribe(data=>{
-      //         setTimeout(()=>{
-      //           console.log("user position:("+data.coords.latitude+","+data.coords.longitude+")");
-      //           this.map.setZoom(17);
-      //           this.map.setCenter(new google.maps.LatLng(data.coords.latitude,data.coords.longitude));
-
-      //           this.drawPath(this.trackedRoute);
-      //         });
-      //       }); 
-      //   }
-    }, 100);
-
   }
 
   drawScootersinMap() {
+    this.http.setDataSerializer('json');
+    this.http.get(this.serverURL + "scooter/disponibles", {}, {}).then(response => {
+      console.log("scooters disponibles response:->" + response.data)
+      let responseBody = JSON.parse(response.data)
+      if (responseBody.body) {
+        let tempScooterArray: any = responseBody.body;
+        console.log("responsebody:" + tempScooterArray.length)
+        this.availableScooters = [];
+        tempScooterArray.forEach(onescooter => {
+          let geometry = onescooter.geometria;
+          console.log("geometria " +geometry)
+          this.availableScooters.push({
+            "guid": onescooter.guid,
+            "bateryLevel": onescooter.bateryLevel,
+            "latlng": geometry.puntos[0],
+          })
+          console.log("cantidad scooters cargados= " + this.availableScooters.length)
+        });
+
+          console.log(this.availableScooters)
+          if (this.showScooters) {
+            setTimeout(()=>{
+              console.log("show scooters")
+              var image = {
+                url: "https://i.imgur.com/4PCncWk.png",
+                size: new google.maps.Size(20, 32),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(0, 32)
+              };
+              var shape = {
+                coords: [1, 1, 1, 20, 18, 20, 18, 1],
+                type: 'poly'
+              };
+              this.availableScooters.forEach(onescooter => {
+                let scootermarker = new google.maps.Marker({
+                  animation: google.maps.Animation.DROP,
+                  map: this.map,
+                  position: new google.maps.LatLng(onescooter.latlng.lat,onescooter.latlng.lng),
+                  icon: image,
+                  shape: shape,strokeColor: '#00A',
+                  strokeOpacity: 0.9,
+                  strokeWeight: 1,
+                });
+              });
+              this.geo.getCurrentPosition().then(data => {
+                this.map.setZoom(17);
+                this.map.setCenter(new google.maps.LatLng(data.coords.latitude, data.coords.longitude));
+              });
+            },200);
+          }
+        
+      }
+    })
     
-    var image = {
-      url: "https://i.imgur.com/4PCncWk.png",
-      size: new google.maps.Size(20, 32),
-      origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(0, 32)
-    };
-    var shape = {
-      coords: [1, 1, 1, 20, 18, 20, 18, 1],
-      type: 'poly'
-    };
-    this.availableScooters.forEach(onescooter => {
-      let scootermarker = new google.maps.Marker({
-        animation: google.maps.Animation.DROP,
-        map: this.map,
-        position: new google.maps.LatLng(onescooter.latlng.lat,onescooter.latlng.lng),
-        icon: image,
-        shape: shape,strokeColor: '#00A',
-        strokeOpacity: 0.9,
-        strokeWeight: 1,
- /*       {
-          path: image.src,//google.maps.SymbolPath.CIRCLE,
-          fillColor: '#00F',
-          fillOpacity: 0.6,
-          
-          scale: 3
-        }
-      */   });
-    });
   }
 
   drawPath(path) {

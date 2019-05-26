@@ -12,13 +12,12 @@ import { HTTP } from '@ionic-native/http/ngx';
 export class SaldoPage  implements OnInit {
 
   amount = 0;
-  username = "facundotest";
+  username = "";
   saldoActual :number=0;
   serverURL = "";
 
   constructor(
     private payPal: PayPal,
-    private alertCtl:AlertController,
     private storage :Storage,
     private platform:Platform,
     private toastCtrl:ToastController,
@@ -50,10 +49,7 @@ export class SaldoPage  implements OnInit {
         PayPalEnvironmentProduction: 'YOUR_PRODUCTION_CLIENT_ID',
         PayPalEnvironmentSandbox: 'AQpSGkGq7uSH7-mszlCHFQz2VC_HWKI1hpQrAwJKQCbqKLaIEwJyIc6Y-yc2KiJQszgCYibhmUp8ryee'
       }).then(() => {
-        // Environments: PayPalEnvironmentNoNetwork, PayPalEnvironmentSandbox, PayPalEnvironmentProduction
         this.payPal.prepareToRender('PayPalEnvironmentSandbox', new PayPalConfiguration({
-          // Only needed if you get an "Internal Service Error" after PayPal login!
-          //payPalShippingAddressOption: 2 // PayPalShippingAddressOptionPayPal
         })).then(() => {
           let payment = new PayPalPayment(this.amount.toString(), 'USD', 'Recarga USD '+this.amount+ ' para el usuario '+this.username, 'recarga');
           this.payPal.renderSinglePaymentUI(payment).then((response) => {
@@ -81,8 +77,6 @@ export class SaldoPage  implements OnInit {
                 }).then(e=>e.present());
               }
             })
-            
-
             // Example sandbox response
             //
             // {
@@ -128,17 +122,18 @@ export class SaldoPage  implements OnInit {
   ionViewWillEnter(){
     this.refreshPage();
   }
-  doRefresh(event){
+  async doRefresh(event){
     console.log('Begin async operation');
     
-    this.refreshPage();
+    await this.refreshPage();
     event.target.complete();
+
     setTimeout(() => {
       console.log('Async operation has ended');
       event.target.complete();
     }, 5000);
   }
-  refreshPage(){
+  async refreshPage():Promise<any>{
 
     this.platform.ready().then(()=>{
       this.storage.get("serverURL").then(serverURL=>{
@@ -152,16 +147,13 @@ export class SaldoPage  implements OnInit {
           if (responseBody.body){
             let userinfo = responseBody.body;
             this.saldoActual=userinfo.saldo;
-            this.toastCtrl.create({
-              message:"saldo"+userinfo.saldo,
-              duration:5000
-            }).then(e=>e.present());
           }else{
             this.toastCtrl.create({
-              message:responseBody.message.toString(),
+              message:"Error:"+responseBody.message.toString(),
               duration:5000
             }).then(e=>e.present());
           }
+          return true;
           })
         });
       });

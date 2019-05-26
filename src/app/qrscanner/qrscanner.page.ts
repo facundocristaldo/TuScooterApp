@@ -78,11 +78,6 @@ export class QrscannerPage implements OnInit {
 
 
   conectarScooter(guidscooter: string, username: any){
-      // this.toastCtrl.create({
-      //   message:"going to connect to scooter "+guidscooter,
-      //   duration:3000
-      // }).then(e=>e.present());
-
       this.http.setDataSerializer('json')
       this.http.post(this.serverURL+'alquileres/alquiler/E',{
         'guid': '123',
@@ -96,19 +91,9 @@ export class QrscannerPage implements OnInit {
       'Connection-Timeout':'5000'
       }
         ).then(response=>{
-        // this.toastCtrl.create({
-        //   message:"response "+response.data.toString(),
-        //   duration:3000
-        // }).then(e=>e.present());
       let responseBody = JSON.parse(response.data);
       if (responseBody.success.toString()=="true" && responseBody.body!=null){
         let infoAlquiler = responseBody.body;
-        
-        // let guidAlquiler = infoAlquiler.get("guid");
-        // this.toastCtrl.create({
-        //   message:"Conectado al scooter:idAlquiler="+infoAlquiler.guid,
-        //   duration:5000
-        // }).then(e=>e.present());
         this.qrScanner.hide();
         this.avanzar(infoAlquiler.guid,guidscooter)
       }else{
@@ -120,24 +105,10 @@ export class QrscannerPage implements OnInit {
     })
   }
 
-  /**{
-    "cliente": "mmaldonado",
-    "duration": "1970-01-01T10:19:05Z[UTC]",
-    "guid": "76f5342a-f362-4dfd-8061-e5a433eb3066",
-    "guidscooter": "oirqwb-eqrvev-wqrfqrf-qwef",
-    "price": 0,
-    "timestamp": "2019-05-08T10:19:05.261Z[UTC]"
-} */
-
   ionViewDidLeave(){
     this.qrScanner.disableLight()
     this.qrScanner.destroy()
-    //window.document.querySelector('*').classList.remove('invisibleAll');
-
   }
-  
-
-
 
   avanzar(infoalquiler:String,guidScooter:String){
     this.platform.ready().then(()=>{

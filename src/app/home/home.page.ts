@@ -5,6 +5,7 @@ import { GoogleMapComponent } from './google-map/google-map.component';
 import { HTTP } from '@ionic-native/http/ngx';
 import { AlertController, Platform, ToastController, NavController, MenuController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
+import { Timer } from '../travelstate/travelstate.page';
 
 @Component({
   selector: 'app-home',
@@ -18,21 +19,17 @@ export class HomePage {
 
   startTravel(){
   
-    // this.toastController.create({
-    //     message:this.serverURL+"users/tiempodisponible?username="+this.username,
-    //     duration:3000
-    //   }).then(e=>e.present());
     this.http.get(this.serverURL+"users/tiempodisponible",{
       username:this.username
     },{}).then(response=>{
       let responseBody = JSON.parse(response.data);
-      // this.toastController.create({
-      //   message:"HTTPResponse:"+responseBody.body,
-      //   duration:3000
-      // }).then(e=>e.present());
       this.platform.ready().then(()=>{
-        this.storage.set("maxTimeToTravel",responseBody.body);
-        if(responseBody.body==null || responseBody.body==0){
+        this.storage.set("maxTimeToTravel",Number((Number(responseBody.body)).toFixed(0)));
+        let tiempoMax = new Timer();
+          for(var i =0 ; i<Number((Number(responseBody.body)).toFixed(0));i++){
+            tiempoMax.addSecond();
+          }
+        if(responseBody.body==null || responseBody.body<=30 || tiempoMax.toString()=="00:00:00"){
           this.alertController.create({
             header:"Saldo insuficiente",
             message:"Usted no tiene saldo para realizar un viaje",
@@ -43,10 +40,11 @@ export class HomePage {
             ]
           }).then(e=>e.present());
         }else{
+          
 
           this.alertController.create({
             header:"Tiempo máximo para usar el scooter",
-            message:"Usted tiene "+responseBody.body+" segundos máximos para usar el scooter.",
+            message:"Usted tiene "+tiempoMax.toString()+" segundos máximos para usar el scooter.",
             buttons:[
             {
               text:'Cancelar',
@@ -60,7 +58,6 @@ export class HomePage {
               text:'Continuar',
               handler:()=>{
                 this.navController.navigateRoot("/qrscanner")
-//                this.router.navigate(['/qrscanner']);
                 this.isStart=false;
               }
             }]
@@ -85,7 +82,6 @@ export class HomePage {
     })
   }
   ionViewWillLeave(){
-    // this.google.map.setDiv(null);
   }
   ngOnDestroy(){
     console.log("destroy home")

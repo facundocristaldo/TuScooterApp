@@ -1,69 +1,74 @@
-
-
 <ion-content>
-<!-- <ion-card> -->
+  <!-- <ion-card> -->
   <ion-label id="registerLbl">Registro</ion-label>
   <ion-icon id="closerRegisterBtn" icon-only name="close" (click)="goback()"></ion-icon>
   <form [formGroup]="formgroup" id="registerForm" class="form">
     <ion-list>
       <ion-item lines="none" id="nameSurname">
-        <ion-item  class="FormAttribute"  [class.haserror]="nameInput.touched && nameInput.hasError('required')">
-          <ion-label class="AttrLabel" >Nombre</ion-label>
+        <ion-item class="FormAttribute" [class.haserror]="nameInput.touched && nameInput.hasError('required')">
+          <ion-label class="AttrLabel">Nombre</ion-label>
           <ion-input placeholder="Joe" type="text" formControlName="nameInput"></ion-input>
           <p *ngIf="nameInput.hasError('required') && nameInput.touched">
-            *Requerido
+            *
           </p>
         </ion-item>
         <ion-item class="FormAttribute" [class.haserror]="surnameInput.hasError('required') && surnameInput.touched">
           <ion-label class="AttrLabel">Apellido</ion-label>
           <ion-input placeholder="Doe" type="text" formControlName="surnameInput"></ion-input>
           <p *ngIf="surnameInput.hasError('required') && surnameInput.touched">
-              *Requerido
-            </p>
+            *
+          </p>
         </ion-item>
       </ion-item>
       <ion-item class="FormAttribute" [class.haserror]="usernameInput.hasError('required') && usernameInput.touched">
         <ion-label class="AttrLabel">Nickname</ion-label>
-        <ion-input placeholder="JoeDoe" type="text" formControlName="usernameInput" ></ion-input>
+        <ion-input placeholder="JoeDoe" type="text" formControlName="usernameInput"></ion-input>
         <p *ngIf="usernameInput.hasError('required') && usernameInput.touched">
-          *Requerido
+          *
         </p>
       </ion-item>
       <ion-item class="FormAttribute" [class.haserror]="emailInput.invalid && emailInput.touched">
         <ion-label class="AttrLabel">Email</ion-label>
         <ion-input placeholder="joedoe@email.com" type="email" formControlName="emailInput"></ion-input>
         <p *ngIf="emailInput.touched && emailInput.hasError('required')">
-            *Requerido
-          </p>
-        <p *ngIf="emailInput.invalid && emailInput.touched && !emailInput.hasError('required')">
-          *Formato incorrecto
+          *
         </p>
+        <!-- <p *ngIf="emailInput.invalid && emailInput.touched && !emailInput.hasError('required')">
+          *Formato incorrecto
+        </p> -->
       </ion-item>
       <ion-item class="FormAttribute" [class.haserror]="passwordInput.hasError('required') && passwordInput.touched">
         <ion-label class="AttrLabel">Contraseña</ion-label>
         <ion-input placeholder="********" name="password" type="password" formControlName="passwordInput"></ion-input>
         <p *ngIf="passwordInput.hasError('required') && passwordInput.touched">
-            *Requerido
-          </p>
-      </ion-item>
-      <ion-item class="FormAttribute" [class.haserror]="confPasswordInput.touched && confPasswordInput.errors?.required">
-        <ion-label class="AttrLabel">Repetir contraseña</ion-label>
-        <ion-input placeholder="********" name="confirmPassword" type="password" formControlName="confPasswordInput"></ion-input> <!-- appConfirmEqualsValidator="password"-->
-        <p *ngIf="confPasswordInput.hasError('required') && confPasswordInput.touched">
-          *Requerido
+          *
         </p>
-        <p *ngIf="confPasswordInput.value!=passwordInput.value && confPasswordInput.touched && !confPasswordInput.errors?.required">
-            *Las contraseñas deben coincidir
-          </p>
       </ion-item>
-      <!--<ion-item class="FormAttribute">
-        <ion-label class="AttrLabel">Celular</ion-label>
-        <ion-input placeholder="0910123534" type="number" formControlName="cellphoneInput"></ion-input>
-      </ion-item> -->
+      <ion-item class="FormAttribute"
+        [class.haserror]="confPasswordInput.touched && confPasswordInput.errors?.required">
+        <ion-label class="AttrLabel">Repetir contraseña</ion-label>
+        <ion-input placeholder="********" name="confirmPassword" type="password" formControlName="confPasswordInput">
+        </ion-input> <!-- appConfirmEqualsValidator="password"-->
+        <p *ngIf="confPasswordInput.hasError('required') && confPasswordInput.touched">
+          *
+        </p>
+        <!-- <p *ngIf="confPasswordInput.value!=passwordInput.value && confPasswordInput.touched && !confPasswordInput.errors?.required">
+            *as contraseñas deben coincidir
+          </p> -->
+      </ion-item>
     </ion-list>
     <div id="btnArea">
-      <ion-button expand="block" id="registerBtn" (click)="register()" [disabled]="formgroup.invalid || confPasswordInput.value!=passwordInput.value" >Registrarse</ion-button>
-      
+      <p>(*) Datos Requeridos</p>
+      <p
+        *ngIf="confPasswordInput.value!=passwordInput.value && confPasswordInput.touched && !confPasswordInput.errors?.required">
+        Las contraseñas deben coincidir.
+      </p>
+      <p *ngIf="emailInput.invalid && emailInput.touched && !emailInput.hasError('required')">
+        Email con formato incorrecto.
+      </p>
+      <ion-button expand="block" id="registerBtn" (click)="register()"
+        [disabled]="formgroup.invalid || confPasswordInput.value!=passwordInput.value">Registrarse</ion-button>
+
       <div id="noAccountYet">
         <ion-label>
           Ya tienes una cuenta?<a (click)="goback()">Ingresar</a>
@@ -71,6 +76,5 @@
       </div>
     </div>
   </form>
-<!-- </ion-card> -->
+  <!-- </ion-card> -->
 </ion-content>
- 

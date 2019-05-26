@@ -37,45 +37,14 @@ export class TravelinfoPage implements OnInit {
      console.log("travel info destroy")
    }
   ionViewWillEnter(){
-    console.log("enter")
     this.alquilerguid = this.activatedroute.snapshot.paramMap.get("id")
-    console.log("enter2")
     this.menuCtl.enable(true);
-    console.log("enter3")
-    this.platform.ready().then(()=>{
-      console.log("enter4")
-      this.storage.get("serverURL").then(serverURL=>{
-        console.log("enter5")
-        // this.guidScooter=scooter;
-        // this.storage.get("alquiler").then(alquilerstorage=>{
-          
-          this.http.get(serverURL+"alquileres/find?guid="+this.alquilerguid,{},{}).then(response=>{
-            console.log(response.data)
-            // let responseBody = JSON.parse(response.data);
-            // if (responseBody.success.toString()=="true" && responseBody.body){
-            //   let alquilerinfo = responseBody.body;
-            //   this.alquiler={
-            //     guidalquiler : alquilerinfo.guid,
-            //     duracion : (alquilerinfo.duration)?alquilerinfo.duration:0,
-            //     precio : (alquilerinfo.price)?alquilerinfo.price:0,
-            //     guidscooter : (alquilerinfo.guidscooter)?alquilerinfo.guidscooter:"",
-            //     cliente : alquilerinfo.cliente,
-            //     recorrido : (alquilerinfo.geometria)?alquilerinfo.geometria:"",
-            //   }
-
-            // }
-          })
-        // })
-      })
-    })
   }
 
   ionViewWillLeave(){
 
   }
   goHome(){
-    console.log("go home");
-    // this.navController.navigateRoot(["/redirect/home"]);
     this.navController.navigateRoot(["/home"]);    
   }
 }
