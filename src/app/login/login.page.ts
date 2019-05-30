@@ -1,9 +1,8 @@
-import { Component, OnInit, Inject, forwardRef, ViewChild } from '@angular/core';
-import { MenuController, Platform, AlertController, ToastController } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { MenuController, Platform, ToastController, LoadingController,Events } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { HTTP } from '@ionic-native/http/ngx';
-
 
 @Component({
   selector: 'app-login',
@@ -14,7 +13,8 @@ export class LoginPage implements OnInit {
   usernameInput ="";
   passwordInput="";
   serverURL = "";
-  dinamicformclass =""
+  dinamicformclass ="";
+  loadingCtrl;
 
   constructor(
     private menuCtl: MenuController,
@@ -22,12 +22,10 @@ export class LoginPage implements OnInit {
     private storage:Storage,
     private http: HTTP,
     private toastCtrl: ToastController,
-    private platform:Platform
+    private platform:Platform,
+    private loadingController: LoadingController,
+    public globalevents:Events
     ) {
-      
-      
-     
-
   }
 
   ngOnInit() {
@@ -40,6 +38,9 @@ export class LoginPage implements OnInit {
       'Content-Type':'application/json',
       'Connection-Timeout':'5000'
     }
+    // this.loadingCtrl = this.loadingController.create({
+
+    // }).then(e=>e.present());
     this.http.post(this.serverURL+'users/login?username='+this.usernameInput+'&password='+this.passwordInput,{},headers)
     .then(response=>{
       let responseBody = JSON.parse(response.data);
@@ -59,16 +60,19 @@ export class LoginPage implements OnInit {
           }
           this.platform.ready().then(()=>{
             this.storage.set('userLoginInfo',userLoginInfo);
-            this.router.navigate(["home"]);
+              // this.loadingCtrl.dismiss();
+              this.router.navigate(["home"]);
           });
         }
       }else if(responseBody.body==null){//error de validacion
+        // this.loadingCtrl.dismiss();
           this.toastCtrl.create({
            message: 'Error de validación',
            duration: 3000
           }).then(e=>e.present());
           this.changestyle();
       }else{ //usuario no existe
+        // this.loadingCtrl.dismiss();
         console.log("usuario no existe");
         this.toastCtrl.create({
            message: 'Error de validación',
@@ -77,15 +81,15 @@ export class LoginPage implements OnInit {
         this.changestyle();
       }
     }).catch(err=>{
+      // this.loadingCtrl.dismiss();
       console.log(err);
       this.toastCtrl.create({
-           message: 'Algo salió mal :'+err.data,
+           message: 'No hay conexión con el servidor.',
            duration: 3000
           }).then(e=>e.present());
       this.changestyle();
-    }).finally(()=>{
-      
     });
+    
   }
 
   ionViewWillEnter(){

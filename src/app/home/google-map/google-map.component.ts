@@ -20,6 +20,8 @@ export class GoogleMapComponent {
   alquiler: "";
   @Input()
   showScooters: boolean;
+  @Input()
+  followME : boolean;
 
   watchPosition = true;
   map: any;
@@ -32,7 +34,7 @@ export class GoogleMapComponent {
   auxLng: number = 0;
   auxRadio: number = 300;
   serverURL = "";
-
+  markerYO;
   AgregarMsg: number = 0;
   formEmp = {
     Rut: '',
@@ -48,131 +50,139 @@ export class GoogleMapComponent {
     lat: '',
     lng: ''
   }
-  availableScooters: {guid,latlng:{lat,lng  },bateryLevel}[] = [];
+  availableScooters: { guid, latlng: { lat, lng }, bateryLevel }[] = [];
 
-  
+
   constructor(public platform: Platform,
     private geo: Geolocation,
     private storage: Storage,
     private http: HTTP,
-    private toastController:ToastController
-  ) { 
+    private toastController: ToastController
+  ) {
   }
   ngOnDestroy() {
-    // this.map.setDiv(null);
-    // this.map.unsubscribe();
-    // document.getElementById('map').removeChild;
     console.log("gogle ng destroy")
-    // this.map=null;
   }
 
   ngOnInit() {
+    document.getElementById("buttonArea").setAttribute("hidden","true");
     setTimeout(() => {
       this.cargarmapa();
     }, 300);
 
   }
 
-  async cargarmapa(){
+  async cargarmapa() {
     console.log("gogle ng init")
-      await this.platform.ready().then(() => {
+    await this.platform.ready().then(() => {
 
-        let mapOptions = {
-          center: { lat: -34.90595, lng: -56.16381749999999 },
-          zoom: 13,
-          mapTypeId: google.maps.MapTypeId.ROADMAP,
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: false
+      let mapOptions = {
+        center: { lat: -34.897567, lng: -56.164346 },
+        zoom: 13,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false
 
+      }
+      this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      
+
+    });
+    this.platform.ready().then(() => {
+      this.storage.get("serverURL").then(data => {
+        this.serverURL = data;
+      }).then(() => {
+        if (this.showScooters) {
+          this.drawScootersinMap();
+          this.centerME();
         }
-        this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-        
-        
-      });
-      console.log("google map will enter")
-      this.platform.ready().then(() => {
-        this.storage.get("serverURL").then(data => {
-          this.serverURL = data;
-        }).then(() => {
-          if (this.showScooters){
-            console.log("show scooters")
-            this.drawScootersinMap();
+        if (this.isTrack) {
+          if (!this.isTracking) {
+            this.trackedRoute = []
+            this.isTracking = true;
           }
-          if (this.isTrack) {
-            console.log("is track")
-            if (!this.isTracking){
-              console.log("Start tracking");
-              this.trackedRoute = []
-              this.isTracking = true;
-            }
-            this.positionSubscription = this.geo.watchPosition()
-              .pipe(
-                filter(p=> p.coords!==undefined)
-              )
-              .subscribe(data=>{
-                setTimeout(()=>{
-                  console.log("user position:("+data.coords.latitude+","+data.coords.longitude+")");
-                  this.map.setZoom(17);
-                  this.map.setCenter(new google.maps.LatLng(data.coords.latitude,data.coords.longitude));
-  
-                  this.drawPath(this.trackedRoute);
-                });
-              }); 
-          }
-          if (this.alquiler != "" && this.alquiler != undefined) {
-            console.log("alquiler |" + this.alquiler + "|")
-            this.http.get(this.serverURL+"alquileres/find?guid="+this.alquiler,{},{}).then(response=>{
-              console.log("alquiler return->"+response.data)
-              let responseBody = JSON.parse(response.data)
-              if (responseBody && responseBody.body!=null){
-                var travelcoordinates = responseBody.body.geometria.puntos
-                var recorrido = new google.maps.Polyline({
-                  path: travelcoordinates,
-                  geodesic: true,
-                  strokeColor: '#5ABE2E  ',
-                  strokeOpacity: 1.0,
-                  strokeWeight: 4
-                });
-                recorrido.setMap(this.map);
-                var bounds = new google.maps.LatLngBounds();
-                for (var i = 0; i < travelcoordinates.length; i++) {
-                  bounds.extend(travelcoordinates[i]);
+          this.positionSubscription = this.geo.watchPosition()
+            .pipe(
+              filter(p => p.coords !== undefined)
+            )
+            .subscribe(data => {
+              setTimeout(() => {
+                if (this.markerYO!=null || this.markerYO!=undefined){
+                  this.markerYO.setMap(null);
                 }
-                
-                // The Center of the Bermuda Triangle - (25.3939245, -72.473816)
-                console.log(bounds.getCenter());
-                this.map.setCenter(bounds.getCenter());
-                this.map.setZoom(15);
-              }
-    
-            });
-          }
 
-          if (this.isTrack || this.showScooters){
-            this.http.get(this.serverURL+"scooter/obtenerArea",{},{}).then(response=>{
-              if (response.status!=200 || response.data==null){
-                this.toastController.create({
-                  message:"Error al obtener área permitida.",
-                  duration:3000
-                }).then(e=>e.present());
-              }else{
-                let responseBody = JSON.parse(response.data)
-                let areaCoords= responseBody.body.puntos;
-                var bermudaTriangle = new google.maps.Polygon({
-                  paths: areaCoords,
-                  strokeColor: '#77DD77',
-                  strokeOpacity: 0.4,
-                  strokeWeight: 0.1,
-                  fillColor: '#77DD77',
-                  fillOpacity: 0.1
+                this.markerYO = new google.maps.Marker({
+                  position: new google.maps.LatLng(data.coords.latitude, data.coords.longitude),
+                  map: this.map,
+                  title: 'Yo',
+                  icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    fillColor: '#00F',
+                    fillOpacity: 0.6,
+                    strokeColor: '#00A',
+                    strokeOpacity: 0.9,
+                    strokeWeight: 1,
+                    scale: 7
+                  }
                 });
-                bermudaTriangle.setMap(this.map);
-              }
+                if (this.followME){
+                  this.map.setCenter(this.markerYO.position());
+                  this.map.setZoom(15);
+                }
+              });
+
             });
-          }
-        })
+        }
+        if (this.alquiler != "" && this.alquiler != undefined) {
+          this.http.get(this.serverURL + "alquileres/find?guid=" + this.alquiler, {}, {}).then(response => {
+            let responseBody = JSON.parse(response.data)
+            if (responseBody && responseBody.body != null) {
+              var travelcoordinates = responseBody.body.geometria.puntos
+              var recorrido = new google.maps.Polyline({
+                path: travelcoordinates,
+                geodesic: true,
+                strokeColor: '#5ABE2E',
+                strokeOpacity: 1.0,
+                strokeWeight: 4
+              });
+              recorrido.setMap(this.map);
+              var bounds = new google.maps.LatLngBounds();
+              for (var i = 0; i < travelcoordinates.length; i++) {
+                bounds.extend(travelcoordinates[i]);
+              }
+              console.log(bounds.getCenter());
+              this.map.setCenter(bounds.getCenter());
+              this.map.setZoom(15);
+            }
+          });
+        }
+
+        if (this.isTrack || this.showScooters) {
+          this.http.get(this.serverURL + "scooter/obtenerArea", {}, {}).then(response => {
+            if (response.status != 200 || response.data == null) {
+              this.toastController.create({
+                message: "Error al obtener área permitida.",
+                duration: 3000
+              }).then(e => e.present());
+            } else {
+              let responseBody = JSON.parse(response.data)
+              let areaCoords = responseBody.body.puntos;
+              var areaPermitida = new google.maps.Polygon({
+                paths: areaCoords,
+                strokeColor: '#77DD77',
+                strokeOpacity: 0.4,
+                strokeWeight: 0.1,
+                fillColor: '#77DD77',
+                fillOpacity: 0.1
+              });
+              areaPermitida.setMap(this.map);
+            }
+          });
+        }
       })
+    })
+    document.getElementById("buttonArea").removeAttribute("hidden");
   }
 
   drawScootersinMap() {
@@ -186,50 +196,46 @@ export class GoogleMapComponent {
         this.availableScooters = [];
         tempScooterArray.forEach(onescooter => {
           let geometry = onescooter.geometria;
-          console.log("geometria " +geometry)
+          console.log("geometria " + geometry)
           this.availableScooters.push({
             "guid": onescooter.guid,
             "bateryLevel": onescooter.bateryLevel,
             "latlng": geometry.puntos[0],
           })
-          console.log("cantidad scooters cargados= " + this.availableScooters.length)
         });
+        if (this.showScooters) {
+          setTimeout(() => {
+            var image = {
+              url: "https://i.imgur.com/4PCncWk.png",
+              size: new google.maps.Size(20, 32),
+              origin: new google.maps.Point(0, 0),
+              anchor: new google.maps.Point(0, 32)
+            };
+            var shape = {
+              coords: [1, 1, 1, 20, 18, 20, 18, 1],
+              type: 'poly'
+            };
+            this.availableScooters.forEach(onescooter => {
+              let scootermarker = new google.maps.Marker({
+                animation: google.maps.Animation.DROP,
+                map: this.map,
+                position: new google.maps.LatLng(onescooter.latlng.lat, onescooter.latlng.lng),
+                icon: image,
+                shape: shape, strokeColor: '#00A',
+                strokeOpacity: 0.9,
+                strokeWeight: 1,
+              });
+            });
+            // this.geo.getCurrentPosition().then(data => {
+            //   this.map.setZoom(17);
+            //   this.map.setCenter(new google.maps.LatLng(data.coords.latitude, data.coords.longitude));
+            // });
+          }, 200);
+        }
 
-          console.log(this.availableScooters)
-          if (this.showScooters) {
-            setTimeout(()=>{
-              console.log("show scooters")
-              var image = {
-                url: "https://i.imgur.com/4PCncWk.png",
-                size: new google.maps.Size(20, 32),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(0, 32)
-              };
-              var shape = {
-                coords: [1, 1, 1, 20, 18, 20, 18, 1],
-                type: 'poly'
-              };
-              this.availableScooters.forEach(onescooter => {
-                let scootermarker = new google.maps.Marker({
-                  animation: google.maps.Animation.DROP,
-                  map: this.map,
-                  position: new google.maps.LatLng(onescooter.latlng.lat,onescooter.latlng.lng),
-                  icon: image,
-                  shape: shape,strokeColor: '#00A',
-                  strokeOpacity: 0.9,
-                  strokeWeight: 1,
-                });
-              });
-              this.geo.getCurrentPosition().then(data => {
-                this.map.setZoom(17);
-                this.map.setCenter(new google.maps.LatLng(data.coords.latitude, data.coords.longitude));
-              });
-            },200);
-          }
-        
       }
     })
-    
+
   }
 
   drawPath(path) {
@@ -257,59 +263,10 @@ export class GoogleMapComponent {
     this.currentMapTrack.setMap(null);
   }
 
-
-  // ionViewWillLeave(){
-  //   this.stopTracking();
-  //   this.map.setDiv(null);
-  //   this.map.unsubscribe();
-  //   google = null
-  //   //this.positionSubscription.unsubscribe();
-  // }
+  centerME() {
+    this.geo.getCurrentPosition().then(data => {
+      this.map.setZoom(17);
+      this.map.setCenter(new google.maps.LatLng(data.coords.latitude, data.coords.longitude));
+    });
+  }
 }
-/*[
-    {
-        "bateryLevel": 100,
-        "geometria": {
-            "puntos": [
-                {
-                    "lat": -71.06032,
-                    "lng": 48.432045
-                }
-            ],
-            "type": "POINT"
-        },
-        "guid": "osadf-afd-asg-rt",
-        "isAvailable": true,
-        "isRented": false
-    },
-    {
-        "bateryLevel": 100,
-        "geometria": {
-            "puntos": [
-                {
-                    "lat": -71.06032,
-                    "lng": 48.432045
-                }
-            ],
-            "type": "POINT"
-        },
-        "guid": "rgewrasfdawertqw",
-        "isAvailable": true,
-        "isRented": false
-    },
-    {
-        "bateryLevel": 100,
-        "geometria": {
-            "puntos": [
-                {
-                    "lat": -71.06032,
-                    "lng": 48.432045
-                }
-            ],
-            "type": "POINT"
-        },
-        "guid": "rgewr234sfdawertqw",
-        "isAvailable": true,
-        "isRented": false
-    }
-]*/

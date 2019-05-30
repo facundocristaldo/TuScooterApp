@@ -8,9 +8,9 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { FormsModule,ReactiveFormsModule  } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { QRScanner} from '@ionic-native/qr-scanner/ngx';
+import { QRScanner } from '@ionic-native/qr-scanner/ngx';
 import { HTTP } from '@ionic-native/http/ngx';
 import { PayPal } from '@ionic-native/paypal/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
@@ -28,20 +28,22 @@ import { IonicStorageModule } from '@ionic/storage';
 import { ChangeipPage } from './changeip/changeip.page';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import { ImagePicker } from '@ionic-native/image-picker/ngx';
+import { Network } from '@ionic-native/network/ngx';
+import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 
 @NgModule({
   declarations: [AppComponent,
-  HomePage,
-  GoogleMapComponent,
-  TravelstatePage,
-  TravelinfoPage,
-  ProfilePage,
-  QrscannerPage,
-  LoginPage,
-  ListPage,
-  RegisterPage,
-  SaldoPage,
-  ChangeipPage,
+    HomePage,
+    GoogleMapComponent,
+    TravelstatePage,
+    TravelinfoPage,
+    ProfilePage,
+    QrscannerPage,
+    LoginPage,
+    ListPage,
+    RegisterPage,
+    SaldoPage,
+    ChangeipPage,
   ],
   entryComponents: [
     AppComponent,
@@ -62,8 +64,8 @@ import { ImagePicker } from '@ionic-native/image-picker/ngx';
     IonicModule.forRoot(),
     AppRoutingModule,
     FormsModule,
-    ReactiveFormsModule ,
-    IonicStorageModule.forRoot(),
+    ReactiveFormsModule,
+    IonicStorageModule.forRoot()
   ],
   providers: [
     StatusBar,
@@ -75,8 +77,10 @@ import { ImagePicker } from '@ionic-native/image-picker/ngx';
     Geolocation,
     GoogleMapComponent,
     BackgroundMode,
-    ImagePicker
+    ImagePicker,
+    Network,
+    LocalNotifications
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

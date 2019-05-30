@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HTTP } from '@ionic-native/http/ngx';
-import { Platform, ToastController } from '@ionic/angular';
+import { Platform, ToastController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms'
 import { ImagePicker } from '@ionic-native/image-picker/ngx';
@@ -23,7 +23,7 @@ export class ProfilePage implements OnInit {
   name: AbstractControl;
   surname: AbstractControl;
   cellphone: AbstractControl;
-
+  loading;
   constructor(
     private storage: Storage,
     private http: HTTP,
@@ -31,6 +31,7 @@ export class ProfilePage implements OnInit {
     public formBuilder: FormBuilder,
     private imagePicker: ImagePicker,
     private toastController: ToastController,
+    private loadingController: LoadingController
 
   ) {
     this.formgroup = formBuilder.group({
@@ -101,7 +102,7 @@ export class ProfilePage implements OnInit {
   }
 
 
-  pickImage() {
+  async pickImage() {
     const options = {
       maximumImagesCount: 1,
       quality: 50,
@@ -109,24 +110,25 @@ export class ProfilePage implements OnInit {
       height: 512,
       outputType: 1
     }
-
+    const loading = await this.loadingController.create({
+      message:""
+    });
+    await loading.present();
+    
+ 
+    setTimeout(() => {
+      
+      loading.dismiss()  
+    }, 5000);
     this.imagePicker.getPictures(options).then((results) => {
+     
+
       for (var i = 0; i < results.length; i++) {
         let base64Img = "data:image/jpeg;base64," + results[i];
-
-        this.toastController.create({
-          message: "IMAGE:" + base64Img,
-          duration: 5000
-        }).then(e => e.present().then(() => {
-          this.toastController.create({
-            message: "IMAGE1:" + results[i],
-            duration: 5000
-          }).then(e => e.present());
-        }));
-
         this.userinfo.urlphoto = results[i];
         this.base64img = base64Img;
       }
+     
     }, (err) => {
       this.toastController.create({
         message: "ERROR:" + err,
@@ -136,8 +138,9 @@ export class ProfilePage implements OnInit {
   }
 
   actualizarAction() {
-    
-    if ( (this.formgroup.get("password").enable) && this.password.value !== this.confirmPassword.value) {
+    let pswenabled:boolean = this.formgroup.get("password").enabled;
+    console.log("enabled? "+pswenabled);
+    if ( (pswenabled ) && this.password.value != this.confirmPassword.value) {
       this.toastController.create({
         message: "Las contraseñas deben coincidir",
         duration: 3000,
@@ -160,35 +163,39 @@ export class ProfilePage implements OnInit {
         }).then(response => {
           if (response.status == 200 && response.data) {
             let responseBody = JSON.parse(response.data);
+            console.log("checking")
             if (responseBody.success == true && responseBody.body == true) {
+              console.log("succes and body true")
               this.toastController.create({
                 message: 'Información Actualizada',
                 duration: 3000
               }).then(e => e.present());
-              if (this.userinfo.password.trim() != "") {
-                this.platform.ready().then(() => {
-                  let userLoginInfo = {
-                    username: this.userinfo.username,
-                    password: this.password.value,
-                  }
-                  this.storage.set('userLoginInfo', userLoginInfo);
-                });
+              if (this.userinfo.password!=undefined && this.userinfo.password!=null){
+                if (this.userinfo.password.trim() != "") {
+                  this.platform.ready().then(() => {
+                    let userLoginInfo = {
+                      username: this.userinfo.username,
+                      password: this.password.value,
+                    }
+                    this.storage.set('userLoginInfo', userLoginInfo);
+                  });
+                }
               }
 
             } else {
               this.toastController.create({
-                message: 'Algo salió mal',
+                message: 'Algo salió mal1',
                 duration: 3000
               }).then(e => e.present());
             }
           } else if (response.status != 200) {//error de validacion
             this.toastController.create({
-              message: 'Algo salió mal',
+              message: 'Algo salió mal2',
               duration: 3000
             }).then(e => e.present());
           } else { //usuario no existe
             this.toastController.create({
-              message: 'Algo salió mal',
+              message: 'Algo salió mal3',
               duration: 3000
             }).then(e => e.present());
           }
@@ -209,4 +216,6 @@ export class ProfilePage implements OnInit {
       this.formgroup.get(name).enable()
     }
   }
+
+  
 }

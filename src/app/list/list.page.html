@@ -8,10 +8,13 @@
 </ion-header>
 
 <ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
   <ion-list *ngIf="alquileres.length>0" >
     <ion-item *ngFor="let alquiler of alquileres"  class="alquilerItem"  (click)="ViewDetails(alquiler)">
       <ion-label class="alquilerFecha">{{alquiler.fechaAlquiler}}</ion-label>
-      <ion-label class="alquilerPrecio">US {{alquiler.precioAlquiler}}</ion-label>
+      <ion-label class="alquilerPrecio">U$S {{alquiler.precioAlquiler}}</ion-label>
     </ion-item>
   </ion-list>
   <ion-item class="noalquileres" *ngIf="alquileres.length==0">

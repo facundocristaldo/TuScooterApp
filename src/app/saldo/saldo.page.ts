@@ -11,7 +11,7 @@ import { HTTP } from '@ionic-native/http/ngx';
 })
 export class SaldoPage  implements OnInit {
 
-  amount = 0;
+  amount = undefined;
   username = "";
   saldoActual :number=0;
   serverURL = "";
@@ -32,7 +32,7 @@ export class SaldoPage  implements OnInit {
   }
   
   async doPaypal(){
-    if (this.amount==0){
+    if (this.amount==0 || this.amount==undefined){
       
       this.toastCtrl.create({
            message: 'Debe ingresar un monto a recargar',
@@ -128,10 +128,10 @@ export class SaldoPage  implements OnInit {
     await this.refreshPage();
     event.target.complete();
 
-    setTimeout(() => {
-      console.log('Async operation has ended');
-      event.target.complete();
-    }, 5000);
+    // setTimeout(() => {
+    //   console.log('Async operation has ended');
+    //   event.target.complete();
+    // }, 5000);
   }
   async refreshPage():Promise<any>{
 
@@ -146,7 +146,7 @@ export class SaldoPage  implements OnInit {
           
           if (responseBody.body){
             let userinfo = responseBody.body;
-            this.saldoActual=userinfo.saldo;
+            this.saldoActual=Number((Number(userinfo.saldo)).toFixed(2));
           }else{
             this.toastCtrl.create({
               message:"Error:"+responseBody.message.toString(),

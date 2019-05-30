@@ -43,8 +43,8 @@ export class HomePage {
           
 
           this.alertController.create({
-            header:"Tiempo máximo para usar el scooter",
-            message:"Usted tiene "+tiempoMax.toString()+" segundos máximos para usar el scooter.",
+            header:"Tiempo máximo",
+            message:"Usted tiene "+tiempoMax.toString()+" para usar el scooter.",
             buttons:[
             {
               text:'Cancelar',

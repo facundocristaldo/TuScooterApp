@@ -62,10 +62,6 @@ export class RegisterPage implements OnInit {
         duration:3000,
       }).then(e=>e.present());
     }else if (this.formgroup.valid){
-      this.toastCtrl.create({
-        message:"HTTP Request address."+this.serverURL+"users/client/abm/A",
-        duration:3000,
-      }).then(e=>e.present());
       let body={
         "username":this.usernameInput.value,
         "password":this.passwordInput.value,

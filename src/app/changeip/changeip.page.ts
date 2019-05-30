@@ -2,6 +2,7 @@ import { Component, OnInit, Inject, forwardRef } from '@angular/core';
 import { AlertController, Platform, ToastController, NavController, MenuController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
+import { LocalNotifications, ELocalNotificationTriggerUnit } from '@ionic-native/local-notifications/ngx';
 
 @Component({
   selector: 'app-changeip',
@@ -9,6 +10,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./changeip.page.scss'],
 })
 export class ChangeipPage implements OnInit {
+  
 
   IP:String="";
   PORT:String="";
@@ -20,8 +22,8 @@ export class ChangeipPage implements OnInit {
     private router : Router,
     private toastCtrl:ToastController,
     private navController:NavController,
-    private menuCtl:MenuController
-
+    private menuCtl:MenuController,
+    private localNotifications:LocalNotifications
     ) {
     }
 
@@ -36,7 +38,19 @@ export class ChangeipPage implements OnInit {
     })
     
   }
+  sendNotification(data) {
+    if(this.localNotifications.hasPermission()){
 
+      this.localNotifications.schedule({
+        title:"TuScooter",
+        text: data,
+        trigger:{
+          in:1,
+          unit: ELocalNotificationTriggerUnit.SECOND
+        }
+      }); 
+    }
+  }
   changeIP(){
     this.platform.ready().then(() => {
       this.storage.set("serverIP",this.IP).then(()=>{

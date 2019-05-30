@@ -105,9 +105,12 @@ export class QrscannerPage implements OnInit {
     })
   }
 
-  ionViewDidLeave(){
+  ionViewWillLeave(){
     this.qrScanner.disableLight()
-    this.qrScanner.destroy()
+    this.qrScanner.hide().then(()=>{
+      this.qrScanner.destroy().then(()=>console.log("Destroyed QRScanner"));
+
+    })
   }
 
   avanzar(infoalquiler:String,guidScooter:String){
