@@ -71,13 +71,17 @@ export class AppComponent {
           if (userLoginInfo!=null && userLoginInfo!=undefined ){
             if (userLoginInfo.username!=null && userLoginInfo.username!=undefined && userLoginInfo.username!=""){
               this.storage.get("serverIP").then(host=>{
-                this.HOST=host;
-                this.storage.get("serverPORT").then(port=>{
-                  this.PORT=port;        
-                  this.connect(userLoginInfo.username);
-                  console.log("frenando timer")
-                  clearInterval(this.intervalo);
-                })
+                if (host){
+                  this.HOST=host;
+                  this.storage.get("serverPORT").then(port=>{
+                    if (port){
+                    this.PORT=port;        
+                    this.connect(userLoginInfo.username);
+                    console.log("frenando timer")
+                    clearInterval(this.intervalo);
+                    }
+                  })
+                }
               })
             }
           }
