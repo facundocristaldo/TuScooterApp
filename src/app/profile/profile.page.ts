@@ -4,6 +4,7 @@ import { Platform, ToastController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms'
 import { ImagePicker } from '@ionic-native/image-picker/ngx';
+import { GlobalProperties } from '../Classes/GlobalProperties';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class ProfilePage implements OnInit {
   surname: AbstractControl;
   cellphone: AbstractControl;
   loading;
+  
   constructor(
     private storage: Storage,
     private http: HTTP,
@@ -31,7 +33,8 @@ export class ProfilePage implements OnInit {
     public formBuilder: FormBuilder,
     private imagePicker: ImagePicker,
     private toastController: ToastController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    public globalprops : GlobalProperties
 
   ) {
     this.formgroup = formBuilder.group({
@@ -138,6 +141,7 @@ export class ProfilePage implements OnInit {
   }
 
   actualizarAction() {
+    let header = this.globalprops.httpheader;
     let pswenabled:boolean = this.formgroup.get("password").enabled;
     console.log("enabled? "+pswenabled);
     if ( (pswenabled ) && this.password.value != this.confirmPassword.value) {
@@ -156,11 +160,7 @@ export class ProfilePage implements OnInit {
         "surname": this.surname.value,
         "cellphone": this.cellphone.value,
         "urlphoto": this.base64img
-      }, {
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          'Connection-Timeout': '5000'
-        }).then(response => {
+      }, header).then(response => {
           if (response.status == 200 && response.data) {
             let responseBody = JSON.parse(response.data);
             console.log("checking")

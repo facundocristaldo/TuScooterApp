@@ -30,6 +30,7 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import { ImagePicker } from '@ionic-native/image-picker/ngx';
 import { Network } from '@ionic-native/network/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+import { GlobalProperties } from './Classes/GlobalProperties';
 
 @NgModule({
   declarations: [AppComponent,
@@ -79,7 +80,8 @@ import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
     BackgroundMode,
     ImagePicker,
     Network,
-    LocalNotifications
+    LocalNotifications,
+    GlobalProperties
   ],
   bootstrap: [AppComponent]
 })

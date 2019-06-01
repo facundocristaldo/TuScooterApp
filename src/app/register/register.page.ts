@@ -4,6 +4,7 @@ import { MenuController, AlertController, Platform, ToastController, NavControll
 import { Storage } from '@ionic/storage';
 import { HTTP } from '@ionic-native/http/ngx';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms'
+import { GlobalProperties } from '../Classes/GlobalProperties';
 
 @Component({
   selector: 'app-register',
@@ -32,7 +33,8 @@ export class RegisterPage implements OnInit {
     private http:HTTP,
     private toastCtrl:ToastController,
     private navController:NavController,
-    public formBuilder: FormBuilder
+    public formBuilder: FormBuilder,
+    public globalprops : GlobalProperties
     ) {
       this.formgroup = formBuilder.group({
         nameInput:['',[Validators.required]],
@@ -72,11 +74,7 @@ export class RegisterPage implements OnInit {
         "urlphoto": "",
         "saldo": 0.0
         }
-      let headers={
-        'Content-Type':'application/json',
-        'Accept':'*/*',
-        'Connection-Timeout':'5000'
-      }
+      let headers=this.globalprops.httpheader;
       this.http.setDataSerializer('json')
       this.http.post(this.serverURL+'users/client/abm/A',
       body

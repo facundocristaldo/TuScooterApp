@@ -3,6 +3,7 @@ import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { ToastController, Platform, AlertController, MenuController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { HTTP } from '@ionic-native/http/ngx';
+import { GlobalProperties } from '../Classes/GlobalProperties';
 
 @Component({
   selector: 'app-qrscanner',
@@ -15,7 +16,6 @@ export class QrscannerPage implements OnInit {
   isTest=true;
   serverURL="";
   lightEnabled: any;
-
   ngOnInit() {
   }
   constructor(
@@ -26,7 +26,8 @@ export class QrscannerPage implements OnInit {
     private storage:Storage,
     private http: HTTP,
     private alertController: AlertController,
-    private menuCtl:MenuController
+    private menuCtl:MenuController,
+    public globalprops : GlobalProperties
     ){ 
  
   }
@@ -78,6 +79,7 @@ export class QrscannerPage implements OnInit {
 
 
   conectarScooter(guidscooter: string, username: any){
+    let header = this.globalprops.httpheader
       this.http.setDataSerializer('json')
       this.http.post(this.serverURL+'alquileres/alquiler/E',{
         'guid': '123',
@@ -85,11 +87,7 @@ export class QrscannerPage implements OnInit {
         'guidscooter': guidscooter,
         'cliente': username
       },
-      {
-      'Accept':'*/*',
-      'Content-Type':'application/json',
-      'Connection-Timeout':'5000'
-      }
+      header
         ).then(response=>{
       let responseBody = JSON.parse(response.data);
       if (responseBody.success.toString()=="true" && responseBody.body!=null){

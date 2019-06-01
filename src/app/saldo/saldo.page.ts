@@ -3,6 +3,7 @@ import {PayPal, PayPalPayment, PayPalConfiguration} from '@ionic-native/paypal/n
 import { AlertController, Platform, ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { HTTP } from '@ionic-native/http/ngx';
+import { GlobalProperties } from '../Classes/GlobalProperties';
 
 @Component({
   selector: 'app-saldo',
@@ -21,7 +22,8 @@ export class SaldoPage  implements OnInit {
     private storage :Storage,
     private platform:Platform,
     private toastCtrl:ToastController,
-    private http:HTTP
+    private http:HTTP,
+    public globalprops : GlobalProperties
     ) { 
       
     }
@@ -58,11 +60,9 @@ export class SaldoPage  implements OnInit {
               message: "El pago se completó correctamente",
               duration: 3000
             }).then(e=>e.present());
-              this.http.post(this.serverURL+"users/recargar?username="+this.username+"&guidpaypal="+paymentdata.id+"&monto="+this.amount+"&moneda=USD",{},{
-              'Accept':'*/*',
-              'content-Type':'application/json',
-              'Connection-Timeout':'5000'
-            }).then(response=>{
+            let header = this.globalprops.httpheader
+              this.http.post(this.serverURL+"users/recargar?username="+this.username+"&guidpaypal="+paymentdata.id+"&monto="+this.amount+"&moneda=USD",{},
+              header).then(response=>{
               let responseBody= JSON.parse(response.data);
               if (responseBody.body=="true" || responseBody.body==true){
                 this.toastCtrl.create({

@@ -10,6 +10,7 @@ export class LocalNotif{
     private toastController:ToastController = new ToastController(this);
 
     sendNotif(data){
+        console.log("Notificacion: "+data)
         if (this.localnotif==null || this.localnotif==undefined){
             this.localnotif = new LocalNotifications()
         }
@@ -28,12 +29,32 @@ export class LocalNotif{
                     }
                 })  
             }else{
-                this.toastController.create({
-                    message:"Notificacion: "+data+".",
-                    duration:5000
-                }).then(e=>e.present())
-            }
-        }catch(err){
+                this.localnotif.requestPermission().then((value)=>{
+                    if (value == true){
+                        this.localnotif.schedule({
+                            title:"TuScooter",
+                            text: data,
+                            trigger:{
+                                in:1,
+                                unit: ELocalNotificationTriggerUnit.SECOND
+                            }
+                        })
+                    }else{
+
+                        this.toastController.create({
+                            message:"Notificacion: "+data+".",
+                            duration:5000
+                        }).then(e=>e.present())
+                    }
+                }).catch(()=>{
+
+                    this.toastController.create({
+                        message:"Notificacion: "+data+".",
+                        duration:5000
+                    }).then(e=>e.present())
+                });
+                }
+            }catch(err){
             console.log("Error en notificacion |"+err.message+"|")
             this.toastController.create({
                 message:"Notificacion: "+data+".",

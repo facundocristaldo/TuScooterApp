@@ -1,10 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Platform, ToastController, NavController, MenuController } from '@ionic/angular';
+import { Platform, ToastController, NavController, MenuController, NumericValueAccessor } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { HTTP } from '@ionic-native/http/ngx';
 import { Time } from '@angular/common';
 import { bind } from '@angular/core/src/render3';
+import { GlobalProperties } from '../Classes/GlobalProperties';
 
 
 @Component({
@@ -31,7 +32,8 @@ export class TravelstatePage implements OnInit {
     private toastController: ToastController,
     private navController: NavController,
     private navParams: ActivatedRoute,
-    private menuCtl: MenuController
+    private menuCtl: MenuController,
+    public globalprops : GlobalProperties
   ) { }
 
   ngOnInit() {
@@ -41,11 +43,7 @@ export class TravelstatePage implements OnInit {
 
   stopTravel() {
     
-    let headers = {
-      'Accept': '*/*',
-      'Content-Type': 'application/json',
-      'Connection-Timeout': '5000'
-    }
+    let headers = this.globalprops.httpheader;
 
 
     this.http.setDataSerializer('json');
@@ -146,11 +144,20 @@ ionViewWillEnter(){
         this.storage.get("scooter").then(scooter => {
           this.guidScooter = scooter;
           this.storage.get("alquiler").then(alquiler => {
-
-
             this.guidAlquiler = alquiler;
-            this.storage.get("maxTimeToTravel").then(maxTimeToTravel => {
-              this.maxDuration = Number((Number(maxTimeToTravel)).toFixed(0));
+              this.storage.get("maxTimeToTravel").then(maxTimeToTravel => {
+                this.maxDuration = Number((Number(maxTimeToTravel)).toFixed(0));
+              });
+            this.storage.get("alquilerduracion").then((duracion:string)=>{
+              if (duracion!="" && duracion!=null && duracion!=undefined){
+
+                let arrayvals: string[] =duracion.split(":");
+                let cantsec:number = (Number( arrayvals[0] )*60*60 ) + (Number(arrayvals[1])*60) + (Number(arrayvals[2]));
+                for (var i = 0; i<cantsec;i++){
+                  this.travelDurationCounter.addSecond();
+                }
+                this.storage.set("alquilerduracion","");
+              }
             });
           });
         });

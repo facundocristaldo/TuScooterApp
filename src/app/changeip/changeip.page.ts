@@ -3,6 +3,7 @@ import { AlertController, Platform, ToastController, NavController, MenuControll
 import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
 import { LocalNotifications, ELocalNotificationTriggerUnit } from '@ionic-native/local-notifications/ngx';
+import { GlobalProperties } from '../Classes/GlobalProperties';
 
 @Component({
   selector: 'app-changeip',

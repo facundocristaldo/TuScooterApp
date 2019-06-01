@@ -5,7 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Storage } from '@ionic/storage';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
-import { LocalNotif } from './WebSocket/LocalNotif';
+import { LocalNotif } from './Classes/LocalNotif';
 
 @Component({
   selector: 'app-root',
@@ -92,7 +92,7 @@ export class AppComponent {
 
   connect(username){
     var SERVER_URL = "ws://"+this.HOST+":"+this.PORT+"/Proyecto-2019Web/notifications/client/";
-    this.ws = new WebSocket(SERVER_URL+username,[]);
+    this.ws = new WebSocket(SERVER_URL+username);
     console.log("connected"+this.ws.data)
     this.ws.onmessage = this.handleMessage;
     this.ws.onerror = this.handleError;
