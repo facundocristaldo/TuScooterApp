@@ -131,20 +131,27 @@ export class LoginPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.changestyle();
     this.menuCtl.enable(false);
     this.platform.ready().then(() => {
       this.storage.get("serverURL").then(serverURL => {
-        this.serverURL = serverURL;
-        this.storage.get("userLoginInfo").then(userLoginInfo => {
-          if (userLoginInfo) {
-            this.usernameInput = userLoginInfo.username;
-            this.passwordInput = userLoginInfo.password;
-            this.login();
-          } else {
-            
-            this.changestyle();
-          }
-        });
+        if (serverURL!=null && serverURL!=undefined || serverURL!=""){
+
+          this.serverURL = serverURL;
+          this.storage.get("userLoginInfo").then(userLoginInfo => {
+            if (userLoginInfo) {
+              this.usernameInput = userLoginInfo.username;
+              this.passwordInput = userLoginInfo.password;
+              this.login();
+            } else {
+              
+              this.changestyle();
+            }
+          });
+        }else{
+          this.splashScreen.hide();
+          this.changestyle();
+        }
       });
     });
   }

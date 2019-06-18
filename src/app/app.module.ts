@@ -69,7 +69,6 @@ import { LocalNotif } from './Classes/LocalNotif';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    LocalNotif,
     IonicStorageModule.forRoot()
   ],
   providers: [
