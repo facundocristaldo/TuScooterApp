@@ -28,21 +28,20 @@ ion-icon#closerRegisterBtn {
     top: 11px;
 }
 #profileForm>form>ion-list>ion-item {
-    width: 95%;
+    width: 100%;
     /* height: 4.4pc; */
     margin-top: 1.3pc;
     margin-bottom: 1.3pc;
 }
 #profileForm>form>ion-list>ion-item>ion-item{
     width: 50%;
-    margin-left: -10px;
-    margin-right: 20px;
+    
 }
 
 ion-item>ion-input {
     /* position: absolute !important; */
     top: 10px !important;
-    margin-left:1pc;
+    margin-left:7px;
 }
 
 ion-item>ion-label {
@@ -122,4 +121,29 @@ div#noAccountYet {
 
 .editBtn{
     opacity:0.5;
+}
+
+.photomessageVisible {
+    position: absolute;
+    padding: 28px;
+    text-align: center;
+    background: #00000073;
+    width: 100%;
+    height: 100%;
+    border-radius: 100px;
+    color: white;
+    font-size: 20px;
+    font-family: none;
+}
+
+.photomessageVisible>p{
+    z-index:1;
+    font-family: serif;
+    position: initial !important;
+    color: white;
+}
+
+.photomessageHidden{
+    position: absolute;
+    visibility: hidden;
 }

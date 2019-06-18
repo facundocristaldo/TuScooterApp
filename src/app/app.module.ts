@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -11,7 +12,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { QRScanner } from '@ionic-native/qr-scanner/ngx';
-import { HTTP } from '@ionic-native/http/ngx';
+
 import { PayPal } from '@ionic-native/paypal/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { HomePage } from './home/home.page';
@@ -31,6 +32,7 @@ import { ImagePicker } from '@ionic-native/image-picker/ngx';
 import { Network } from '@ionic-native/network/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { GlobalProperties } from './Classes/GlobalProperties';
+import { LocalNotif } from './Classes/LocalNotif';
 
 @NgModule({
   declarations: [AppComponent,
@@ -62,17 +64,18 @@ import { GlobalProperties } from './Classes/GlobalProperties';
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     IonicModule.forRoot(),
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+    LocalNotif,
     IonicStorageModule.forRoot()
   ],
   providers: [
     StatusBar,
     SplashScreen,
     QRScanner,
-    HTTP,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     PayPal,
     Geolocation,

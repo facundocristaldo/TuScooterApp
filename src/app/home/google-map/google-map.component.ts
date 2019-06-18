@@ -3,7 +3,7 @@ import { Platform, ToastController } from '@ionic/angular';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { filter } from 'rxjs/operators';
 import { Storage } from '@ionic/storage';
-import { HTTP } from '@ionic-native/http/ngx';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 declare var google;
 
@@ -51,14 +51,20 @@ export class GoogleMapComponent {
     lng: ''
   }
   availableScooters: { guid, latlng: { lat, lng }, bateryLevel }[] = [];
+  token = "";
 
-
-  constructor(public platform: Platform,
+  constructor(
+    public platform: Platform,
     private geo: Geolocation,
     private storage: Storage,
-    private http: HTTP,
+    private http: HttpClient,
     private toastController: ToastController
   ) {
+    this.platform.ready().then(()=>{
+      this.storage.get("token").then(token=>{
+        this.token = token;
+      })
+    })
   }
   ngOnDestroy() {
     console.log("gogle ng destroy")
@@ -135,16 +141,30 @@ export class GoogleMapComponent {
             });
         }
         if (this.alquiler != "" && this.alquiler != undefined) {
-          this.http.get(this.serverURL + "alquileres/find?guid=" + this.alquiler, {}, {}).then(response => {
-            let responseBody = JSON.parse(response.data)
+          let headers = new HttpHeaders({
+            'Authorization':this.token
+          })
+          let option = {
+            headers:headers
+          }
+          this.http.get(this.serverURL + "alquileres/find?guid=" + this.alquiler,option ).subscribe(response => {
+            let responseBody:any = response;
             if (responseBody && responseBody.body != null) {
-              var travelcoordinates = responseBody.body.geometria.puntos
+              let scooter :any = responseBody.body
+              var travelcoordinates = scooter.geometria.puntos
+              var lineSymbol = {
+                path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW
+              };
               var recorrido = new google.maps.Polyline({
                 path: travelcoordinates,
                 geodesic: true,
                 strokeColor: '#5ABE2E',
                 strokeOpacity: 1.0,
-                strokeWeight: 4
+                strokeWeight: 4,
+                icons: [{
+                  icon: lineSymbol,
+                  offset: '100%'
+                }],
               });
               recorrido.setMap(this.map);
               var bounds = new google.maps.LatLngBounds();
@@ -159,14 +179,20 @@ export class GoogleMapComponent {
         }
 
         if (this.isTrack || this.showScooters) {
-          this.http.get(this.serverURL + "scooter/obtenerArea", {}, {}).then(response => {
-            if (response.status != 200 || response.data == null) {
+          let headers = new HttpHeaders({
+            'Authorization':this.token
+          })
+          let option = {
+            headers:headers
+          }
+          this.http.get(this.serverURL + "scooter/obtenerArea", option).subscribe(response => {
+            if ( response == null) {
               this.toastController.create({
                 message: "Error al obtener área permitida.",
                 duration: 3000
               }).then(e => e.present());
             } else {
-              let responseBody = JSON.parse(response.data)
+              let responseBody :any= response;
               let areaCoords = responseBody.body.puntos;
               var areaPermitida = new google.maps.Polygon({
                 paths: areaCoords,
@@ -186,17 +212,24 @@ export class GoogleMapComponent {
   }
 
   drawScootersinMap() {
-    this.http.setDataSerializer('json');
-    this.http.get(this.serverURL + "scooter/disponibles", {}, {}).then(response => {
-      console.log("scooters disponibles response:->" + response.data)
-      let responseBody = JSON.parse(response.data)
+    
+    let headers = new HttpHeaders({
+      'Authorization':this.token
+    })
+    let option = {
+      headers:headers
+    }
+    this.http.get(this.serverURL + "scooter/disponibles", option).subscribe(response => {
+      console.log("scooters disponibles response:->" + response)
+      let responseBody :any =response
       if (responseBody.body) {
         let tempScooterArray: any = responseBody.body;
         console.log("responsebody:" + tempScooterArray.length)
         this.availableScooters = [];
         tempScooterArray.forEach(onescooter => {
-          let geometry = onescooter.geometria;
-          console.log("geometria " + geometry)
+          let geometry : any = onescooter.geometria;
+          console.log("geometria ")
+          console.log(geometry)
           this.availableScooters.push({
             "guid": onescooter.guid,
             "bateryLevel": onescooter.bateryLevel,

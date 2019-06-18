@@ -13,12 +13,15 @@
     </ion-refresher>
   <ion-list *ngIf="alquileres.length>0" >
     <ion-item *ngFor="let alquiler of alquileres"  class="alquilerItem"  (click)="ViewDetails(alquiler)">
-      <ion-label class="alquilerFecha">{{alquiler.fechaAlquiler}}</ion-label>
-      <ion-label class="alquilerPrecio">U$S {{alquiler.precioAlquiler}}</ion-label>
+      <ion-icon name="help-circle-outline" style="font-size: 35px;margin-right: 5px;"></ion-icon>
+      <div class="itemDiv">
+        <ion-label class="alquilerFecha">{{alquiler.fechaAlquiler}}</ion-label>
+        <ion-label class="alquilerPrecio">U$S {{alquiler.precioAlquiler}}</ion-label>
+      </div>
     </ion-item>
   </ion-list>
   <ion-item class="noalquileres" *ngIf="alquileres.length==0">
-    <ion-title>No se encontraron viajes</ion-title>
+    <ion-title>No hay viajes</ion-title>
   </ion-item>
   <!--
     <div *ngIf="selectedItem" padding>

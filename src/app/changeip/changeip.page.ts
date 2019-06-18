@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
 import { LocalNotifications, ELocalNotificationTriggerUnit } from '@ionic-native/local-notifications/ngx';
 import { GlobalProperties } from '../Classes/GlobalProperties';
+import { LocalNotif } from '../Classes/LocalNotif';
 
 @Component({
   selector: 'app-changeip',
@@ -40,17 +41,19 @@ export class ChangeipPage implements OnInit {
     
   }
   sendNotification(data) {
-    if(this.localNotifications.hasPermission()){
+    let LocalNotifi: any = new LocalNotif();
+    LocalNotifi.sendNotification(data)
+    // if(this.localNotifications.hasPermission()){
 
-      this.localNotifications.schedule({
-        title:"TuScooter",
-        text: data,
-        trigger:{
-          in:1,
-          unit: ELocalNotificationTriggerUnit.SECOND
-        }
-      }); 
-    }
+    //   this.localNotifications.schedule({
+    //     title:"TuScooter",
+    //     text: data,
+    //     trigger:{
+    //       in:1,
+    //       unit: ELocalNotificationTriggerUnit.SECOND
+    //     }
+    //   }); 
+    // }
   }
   changeIP(){
     this.platform.ready().then(() => {
@@ -59,7 +62,7 @@ export class ChangeipPage implements OnInit {
           let serverURL = "http://"+this.IP+":"+this.PORT+"/Proyecto-2019Web/resources/";
           this.storage.set("serverURL",serverURL).then(()=>{
             this.toastCtrl.create({
-              message: 'datos del servidor actualizados',
+              message: 'Datos del servidor actualizados con éxito.',
               duration: 3000
             }).then(e=>e.present());
             this.navController.pop();

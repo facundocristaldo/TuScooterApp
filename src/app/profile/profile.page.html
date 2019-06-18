@@ -13,6 +13,7 @@
       </ion-refresher>
   <div id="profileForm" class="form">
     <div class="FormAttribute" id="profilePhoto" (click)="pickImage()">
+      <div class="photomessageHidden" id="photomessage"> <p> Actualice</p> </div>
       <img (click)="selectImage()" *ngIf="userinfo.urlphoto" [src]="userinfo.urlphoto"/>
     </div>
     <form  [formGroup]="formgroup">
@@ -40,16 +41,16 @@
         </ion-item>
         <ion-item class="FormAttribute">
           <ion-label class="AttrLabel">Contraseña</ion-label>
-          <ion-input placeholder="********" name="password" type="password" formControlName="password" [(ngModel)]="userinfo.password"></ion-input>
+          <ion-input placeholder="********" name="password" type="password" minlength="6" formControlName="password" [(ngModel)]="userinfo.password"></ion-input>
           <ion-icon name="create" (click)="toggleEnable('password');toggleEnable('confirmPassword');" class="editBtn"></ion-icon>
         </ion-item>
         <ion-item class="FormAttribute" *ngIf="confirmPassword.enabled">
           <ion-label class="AttrLabel">Repetir contraseña</ion-label>
-          <ion-input placeholder="********" name="confirmPassword" type="password" formControlName="confirmPassword" [(ngModel)]="confirmPassword.value"></ion-input>
+          <ion-input placeholder="********" name="confirmPassword" type="password" minlength="6" formControlName="confirmPassword" [(ngModel)]="confirmPassword.value"></ion-input>
         </ion-item>
         <ion-item class="FormAttribute">
           <ion-label class="AttrLabel">Celular</ion-label>
-          <ion-input placeholder="0910123534" type="number" formControlName="cellphone" [(ngModel)]="userinfo.cellphone"></ion-input>
+          <ion-input placeholder="0910123534" inputmode="tel" formControlName="cellphone" [(ngModel)]="userinfo.cellphone"></ion-input>
           <ion-icon name="create" (click)="toggleEnable('cellphone')" class="editBtn"></ion-icon>
         </ion-item>
       </ion-list>

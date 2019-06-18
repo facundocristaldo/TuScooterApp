@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { ToastController, Platform, AlertController, MenuController, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { HTTP } from '@ionic-native/http/ngx';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 import { GlobalProperties } from '../Classes/GlobalProperties';
 
 @Component({
@@ -16,6 +17,7 @@ export class QrscannerPage implements OnInit {
   isTest=true;
   serverURL="";
   lightEnabled: any;
+  token="";
   ngOnInit() {
   }
   constructor(
@@ -24,7 +26,7 @@ export class QrscannerPage implements OnInit {
     private toastCtrl: ToastController,
     private platform : Platform,
     private storage:Storage,
-    private http: HTTP,
+    private http: HttpClient,
     private alertController: AlertController,
     private menuCtl:MenuController,
     public globalprops : GlobalProperties
@@ -40,6 +42,9 @@ export class QrscannerPage implements OnInit {
       this.storage.get("serverURL").then(serverURL=>{
           this.serverURL= serverURL;
       });
+      this.storage.get("token").then(value=>{
+        this.token=value;
+      })
     }) 
     // //window.document.querySelector('app-root').classList.add('transparentBody');
    
@@ -79,17 +84,24 @@ export class QrscannerPage implements OnInit {
 
 
   conectarScooter(guidscooter: string, username: any){
-    let header = this.globalprops.httpheader
-      this.http.setDataSerializer('json')
+    
+    let headers = new HttpHeaders({
+      'Authorization':this.token,
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+      'Connection-Timeout': '5000'
+    })
+    let option = {
+      headers:headers
+    }
       this.http.post(this.serverURL+'alquileres/alquiler/E',{
         'guid': '123',
         'price': 0.0,
         'guidscooter': guidscooter,
         'cliente': username
-      },
-      header
-        ).then(response=>{
-      let responseBody = JSON.parse(response.data);
+      },option
+        ).subscribe(response=>{
+      let responseBody :any = response;
       if (responseBody.success.toString()=="true" && responseBody.body!=null){
         let infoAlquiler = responseBody.body;
         this.qrScanner.hide();

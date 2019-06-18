@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HTTP } from '@ionic-native/http/ngx';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 import { ToastController, Platform, } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
@@ -14,10 +15,10 @@ export class ListPage implements OnInit {
   username  = "";
   serverURL="";
   alquileres : any[]=[];
-  
+  token="";
   
   constructor(
-    private http:HTTP,
+    private http:HttpClient,
     private toastController:ToastController,
     private platform : Platform, 
     private storage:Storage,
@@ -36,7 +37,10 @@ export class ListPage implements OnInit {
       this.storage.get("userLoginInfo").then(e=>this.username=e.username)
       this.storage.get("serverURL").then((serverURL=>{
         this.serverURL = serverURL;
-        this.refreshPage();
+        this.storage.get("token").then(value=>{
+          this.token=value;
+          this.refreshPage();
+        })
       }))
     })
 
@@ -54,13 +58,20 @@ export class ListPage implements OnInit {
   }
 
   async refreshPage():Promise<any>{
-    this.http.get(this.serverURL+"alquileres/porcliente?username="+this.username,{},{}).then(response=>{
-      let responseBody = JSON.parse(response.data);
+    let headers = new HttpHeaders({
+      'Authorization':this.token
+    })
+    let option = {
+      headers:headers
+    }
+    this.http.get(this.serverURL+"alquileres/porcliente?username="+this.username,option).subscribe(response=>{
+      let responseBody :any = response;
       if (responseBody.body!=[] && responseBody.body!=null){
 
         console.log(responseBody)
         let tempListaAlquileres :any[] = responseBody.body;
         console.log(tempListaAlquileres)
+        tempListaAlquileres=tempListaAlquileres.sort();
         for (var i=0;i<tempListaAlquileres.length;i++){
         
           var tempAlquiler:any = tempListaAlquileres[i];
@@ -70,13 +81,13 @@ export class ListPage implements OnInit {
             username: tempAlquiler.cliente,
             alquilerguid: tempAlquiler.guid,
             fechaAlquiler: "",
-            precioAlquiler:tempAlquiler.price,
+            precioAlquiler:Number((Number(tempAlquiler.price)).toFixed(2)),
             duracion:"",
             ubicacionesDeReferencia:[]
           }
 
           if (tempduration!=undefined && tempduration!=null){
-            alquilertoPush.duracion = tempduration.substr(12,8).replace("[a-zA-Z]","");
+            alquilertoPush.duracion = tempduration.substr(11,8).replace("[a-zA-Z]","");
           }
           if (tempfecha!=undefined && tempfecha!=null){
             alquilertoPush.fechaAlquiler = tempfecha.substr(0,19).replace("T"," ");
@@ -91,12 +102,7 @@ export class ListPage implements OnInit {
         }
       }
       
-    }).catch(err=>{
-      this.toastController.create({
-        message:"Error"+err,
-        duration:3000
-      }).then(e=>e.present())
-    })
+    });
   }
 }
 

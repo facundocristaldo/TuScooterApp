@@ -11,7 +11,7 @@ ion-content{
 
 ion-label#registerLbl {
     font-size: 2.5pc;
-    font-family: serif;
+    font-family: cursive;
     font-weight: bolder;
     margin-left: 6px;
 }
@@ -31,14 +31,13 @@ ion-icon#closerRegisterBtn {
 }
 #registerForm>ion-list>ion-item>ion-item{
     width: 50%;
-    margin-left: -10px;
-    margin-right: 20px;
+
 }
 
 ion-item>ion-input {
     /* position: absolute !important; */
     top: 10px !important;
-    margin-left:1pc;
+    margin-left:7px;
 }
 
 ion-item>ion-label {

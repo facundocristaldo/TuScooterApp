@@ -42,13 +42,14 @@ export class AppComponent {
   notif = new LocalNotif();
   constructor(
     private platform: Platform,
-    private splashScreen: SplashScreen,
+    
     private statusBar: StatusBar,
     private plt:Platform,
     private storage:Storage,
     private backgroundmode: BackgroundMode,
     private navController : NavController,
-    public globalEvents:Events
+    public globalEvents:Events,
+    private splashScreen: SplashScreen,
   ) {
     this.initializeApp();
   }

@@ -2,7 +2,7 @@ import { Component, OnInit, forwardRef, Inject } from '@angular/core';
 import {PayPal, PayPalPayment, PayPalConfiguration} from '@ionic-native/paypal/ngx';
 import { AlertController, Platform, ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { HTTP } from '@ionic-native/http/ngx';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GlobalProperties } from '../Classes/GlobalProperties';
 
 @Component({
@@ -16,13 +16,13 @@ export class SaldoPage  implements OnInit {
   username = "";
   saldoActual :number=0;
   serverURL = "";
-
+  token = "";
   constructor(
     private payPal: PayPal,
     private storage :Storage,
     private platform:Platform,
     private toastCtrl:ToastController,
-    private http:HTTP,
+    private http:HttpClient,
     public globalprops : GlobalProperties
     ) { 
       
@@ -60,11 +60,20 @@ export class SaldoPage  implements OnInit {
               message: "El pago se completó correctamente",
               duration: 3000
             }).then(e=>e.present());
-            let header = this.globalprops.httpheader
+            let headers = new HttpHeaders({
+              'Authorization':this.token,
+              'Accept': '*/*',
+              'Content-Type': 'application/json',
+              'Connection-Timeout': '5000'
+            })
+            let option = {
+              headers:headers
+            }
               this.http.post(this.serverURL+"users/recargar?username="+this.username+"&guidpaypal="+paymentdata.id+"&monto="+this.amount+"&moneda=USD",{},
-              header).then(response=>{
-              let responseBody= JSON.parse(response.data);
+              option).subscribe(response=>{
+              let responseBody : any= response;
               if (responseBody.body=="true" || responseBody.body==true){
+                this.amount=0
                 this.toastCtrl.create({
                   message: "El pago se guardó correctamente",
                   duration: 3000
@@ -120,6 +129,11 @@ export class SaldoPage  implements OnInit {
   }
 
   ionViewWillEnter(){
+    this.platform.ready().then(()=>{
+      this.storage.get("token").then(value=>{
+        this.token = value;
+      })
+    })
     this.refreshPage();
   }
   async doRefresh(event){
@@ -141,8 +155,17 @@ export class SaldoPage  implements OnInit {
         this.storage.get("userLoginInfo").then(data=>{
           this.saldoActual = data.saldo
         this.username = data.username;
-        this.http.get(this.serverURL+"users/cliente?username="+this.username,{},{}).then(response=>{
-          let responseBody=JSON.parse(response.data);
+        let headers = new HttpHeaders({
+          'Authorization':this.token,
+          'Accept': '*/*',
+          'Content-Type': 'application/json',
+          'Connection-Timeout': '5000'
+        })
+        let option = {
+          headers:headers
+        }
+        this.http.get(this.serverURL+"users/cliente?username="+this.username,option).subscribe(response=>{
+          let responseBody:any=response;
           
           if (responseBody.body){
             let userinfo = responseBody.body;

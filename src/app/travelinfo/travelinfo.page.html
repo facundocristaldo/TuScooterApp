@@ -9,9 +9,10 @@
         <google-map [isTrack]="false" [showScooters]="false" [alquiler]="alquilerguid" [followME]="false"></google-map>
     </div>
     <div id="travelInfo">
-      <!-- <ion-label>GuidAlquiler:{{alquiler.guidalquiler}}</ion-label> -->
-      <!-- <ion-label>GuidScooter:{{(alquiler.guidscooter)?alquiler.guidscooter:""}}</ion-label>
-      <ion-label>Precio del Alquiler:{{alquiler.precio}}</ion-label> -->
+      <ion-label>Fecha: {{fecha}}</ion-label>
+      <ion-label>Duración: {{duracion}}  U$S{{precio}}</ion-label>
+      <ion-label>Scooter: {{guidscooter}}</ion-label>
+
       <ion-button expand="block" id="goHomeBtn" (click)="goHome()">Volver al Inicio</ion-button>
       <!-- <ion-back-button id="goHomeBtn" defaultHref="/home">Volver al Inicio</ion-back-button> -->
     </div>

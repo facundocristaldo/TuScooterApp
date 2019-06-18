@@ -39,7 +39,7 @@
       </ion-item>
       <ion-item class="FormAttribute" [class.haserror]="passwordInput.hasError('required') && passwordInput.touched">
         <ion-label class="AttrLabel">Contraseña</ion-label>
-        <ion-input placeholder="********" name="password" type="password" formControlName="passwordInput"></ion-input>
+        <ion-input placeholder="********" name="password" type="password" minlength="6" formControlName="passwordInput"></ion-input>
         <p *ngIf="passwordInput.hasError('required') && passwordInput.touched">
           *
         </p>
@@ -47,7 +47,7 @@
       <ion-item class="FormAttribute"
         [class.haserror]="confPasswordInput.touched && confPasswordInput.errors?.required">
         <ion-label class="AttrLabel">Repetir contraseña</ion-label>
-        <ion-input placeholder="********" name="confirmPassword" type="password" formControlName="confPasswordInput">
+        <ion-input placeholder="********" name="confirmPassword" type="password" minlength="6" formControlName="confPasswordInput">
         </ion-input> <!-- appConfirmEqualsValidator="password"-->
         <p *ngIf="confPasswordInput.hasError('required') && confPasswordInput.touched">
           *

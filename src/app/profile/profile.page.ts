@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HTTP } from '@ionic-native/http/ngx';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 import { Platform, ToastController, LoadingController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms'
@@ -25,10 +26,11 @@ export class ProfilePage implements OnInit {
   surname: AbstractControl;
   cellphone: AbstractControl;
   loading;
-  
+  token="";
+
   constructor(
     private storage: Storage,
-    private http: HTTP,
+    private http: HttpClient,
     private platform: Platform,
     public formBuilder: FormBuilder,
     private imagePicker: ImagePicker,
@@ -64,6 +66,11 @@ export class ProfilePage implements OnInit {
   }
 
   ionViewWillEnter() {
+    this.platform.ready().then(()=>{
+      this.storage.get("token").then(value=>{
+        this.token=value;
+      })
+    })
     this.refreshPage()
   }
 
@@ -80,12 +87,20 @@ export class ProfilePage implements OnInit {
   }
 
   async refreshPage(): Promise<any> {
+    document.getElementById("photomessage").classList.remove("photomessageVisible")
+    document.getElementById("photomessage").classList.add("photomessageHidden")
     this.platform.ready().then(() => {
       this.storage.get("serverURL").then(serverURL => {
         this.serverURL = serverURL;
         this.storage.get("userLoginInfo").then(userinfo => {
-          this.http.get(this.serverURL + "users/cliente?username=" + userinfo.username, {}, {}).then(response => {
-            let responseBody = JSON.parse(response.data);
+          let headers = new HttpHeaders({
+            'Authorization':this.token
+          })
+          let option = {
+            headers:headers
+          }
+          this.http.get(this.serverURL + "users/cliente?username=" + userinfo.username, option).subscribe(response => {
+            let responseBody :any=response;
             if (responseBody.body) {
               this.userinfo = responseBody.body;
               this.formgroup.get("name").disable();
@@ -128,9 +143,10 @@ export class ProfilePage implements OnInit {
 
       for (var i = 0; i < results.length; i++) {
         let base64Img = "data:image/jpeg;base64," + results[i];
-        this.userinfo.urlphoto = results[i];
         this.base64img = base64Img;
       }
+      document.getElementById("photomessage").classList.remove("photomessageHidden")
+      document.getElementById("photomessage").classList.add("photomessageVisible")
      
     }, (err) => {
       this.toastController.create({
@@ -141,7 +157,15 @@ export class ProfilePage implements OnInit {
   }
 
   actualizarAction() {
-    let header = this.globalprops.httpheader;
+    let headers = new HttpHeaders({
+      'Authorization':this.token,
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+      'Connection-Timeout': '5000'
+    })
+    let option = {
+      headers:headers
+    }
     let pswenabled:boolean = this.formgroup.get("password").enabled;
     console.log("enabled? "+pswenabled);
     if ( (pswenabled ) && this.password.value != this.confirmPassword.value) {
@@ -151,7 +175,7 @@ export class ProfilePage implements OnInit {
       }).then(e => e.present());
     } else {
 
-      this.http.setDataSerializer("json")
+      
       this.http.post(this.serverURL + "users/client/abm/M", {
         "username": this.userinfo.username,
         "password": this.password.value,
@@ -160,9 +184,9 @@ export class ProfilePage implements OnInit {
         "surname": this.surname.value,
         "cellphone": this.cellphone.value,
         "urlphoto": this.base64img
-      }, header).then(response => {
-          if (response.status == 200 && response.data) {
-            let responseBody = JSON.parse(response.data);
+      }, option).subscribe(response => {
+          if (response) {
+            let responseBody :any=response;
             console.log("checking")
             if (responseBody.success == true && responseBody.body == true) {
               console.log("succes and body true")
@@ -181,6 +205,7 @@ export class ProfilePage implements OnInit {
                   });
                 }
               }
+              this.refreshPage();
 
             } else {
               this.toastController.create({
@@ -188,23 +213,13 @@ export class ProfilePage implements OnInit {
                 duration: 3000
               }).then(e => e.present());
             }
-          } else if (response.status != 200) {//error de validacion
-            this.toastController.create({
-              message: 'Algo salió mal2',
-              duration: 3000
-            }).then(e => e.present());
-          } else { //usuario no existe
+          }  else { //usuario no existe
             this.toastController.create({
               message: 'Algo salió mal3',
               duration: 3000
             }).then(e => e.present());
           }
-        }).catch(err => {
-          this.toastController.create({
-            message: 'Algo salió mal :' + err.data,
-            duration: 3000
-          }).then(e => e.present());
-        });
+        })
     }
   }
 

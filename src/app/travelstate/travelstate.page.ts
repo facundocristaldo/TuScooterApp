@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Platform, ToastController, NavController, MenuController, NumericValueAccessor } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { HTTP } from '@ionic-native/http/ngx';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Time } from '@angular/common';
 import { bind } from '@angular/core/src/render3';
 import { GlobalProperties } from '../Classes/GlobalProperties';
@@ -24,11 +24,11 @@ export class TravelstatePage implements OnInit {
   guidAlquiler: any;
   guidScooter: String = "";
   interval; 
-
+  token="";
   constructor(
     private platform: Platform,
     private storage: Storage,
-    private http: HTTP,
+    private http: HttpClient,
     private toastController: ToastController,
     private navController: NavController,
     private navParams: ActivatedRoute,
@@ -43,10 +43,15 @@ export class TravelstatePage implements OnInit {
 
   stopTravel() {
     
-    let headers = this.globalprops.httpheader;
-
-
-    this.http.setDataSerializer('json');
+    let headers = new HttpHeaders({
+      'Authorization':this.token,
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+      'Connection-Timeout': '5000'
+    })
+    let option = {
+      headers:headers
+    }
     this.http.post(this.serverURL + "alquileres/alquiler/T",
       {
         "guid": this.guidAlquiler,
@@ -54,8 +59,8 @@ export class TravelstatePage implements OnInit {
         "guidscooter": this.guidScooter,
         "cliente": this.userinfo.username
       }
-      , headers).then(response => {
-        let responseBody = JSON.parse(response.data);
+      , option).subscribe(response => {
+        let responseBody :any = response;
         console.log(responseBody.body)
         if (responseBody.success.toString() == 'true' && responseBody.body != null) {
           let infoAlquiler = responseBody.body;
@@ -71,12 +76,7 @@ export class TravelstatePage implements OnInit {
             duration: 3000
           }).then(e => e.present);
         }
-      }).catch(e => {
-        this.toastController.create({
-          message: "Algo falló",
-          duration: 3000
-        }).then(e => e.present);
-      })
+      });
 
 
     //this.router.navigate(['/travelinfo/'+this.guidScooter+'/'+this.guidAlquiler+"/"+price]);
@@ -118,7 +118,7 @@ export class TravelstatePage implements OnInit {
           duration: 800,
         }).then(e => { e.present() })
       }
-      if ((this.maxDuration-this.travelDurationCounter.toSeconds())==1){
+      if ((this.maxDuration-this.travelDurationCounter.toSeconds())<=(1)){
         this.toastController.create({
           message: "Finalizando viaje",
           duration: 800,
@@ -148,6 +148,9 @@ ionViewWillEnter(){
               this.storage.get("maxTimeToTravel").then(maxTimeToTravel => {
                 this.maxDuration = Number((Number(maxTimeToTravel)).toFixed(0));
               });
+              this.storage.get("token").then(value=>{
+                this.token=value;
+              })
             this.storage.get("alquilerduracion").then((duracion:string)=>{
               if (duracion!="" && duracion!=null && duracion!=undefined){
 

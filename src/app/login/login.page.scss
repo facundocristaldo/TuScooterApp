@@ -25,7 +25,7 @@ div#loginForm img#logoImage{
 }
 #noAccountYet{
     text-align: center;
-    margin-top: 50px;
+    margin-top: 10px;
 }
 div#noAccountYet a {
     text-decoration: none; 
@@ -59,4 +59,22 @@ a#ghost {
     opacity:1 !important;
     transition-delay: 0ms;
     transition-duration: 2s;   
+}
+
+img#logoImageNoLogin{
+    width: 76%;
+    margin-bottom: 30px;
+    margin-left: 12%;
+    top: 25%;
+    position: fixed;
+    opacity: 0.8;
+}
+
+img#logoImageNoLogin.hideImg{
+    opacity: 0 !important;
+    transition-delay: 0ms;
+    width: 9px;
+    transition-duration: 2s;
+    margin-left: 50%;
+    margin-top: 50%;
 }

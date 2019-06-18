@@ -9,3 +9,11 @@
 @import '~@ionic/angular/css/text-alignment.css';
 @import '~@ionic/angular/css/text-transformation.css';
 @import '~@ionic/angular/css/flex-utils.css';
+
+
+ion-header ion-toolbar ion-title{
+    font-family: cursive;
+}
+ion-list ion-menu-toggle ion-item ion-label.sc-ion-label-md-h.sc-ion-label-md-s.md.hydrated {
+    font-family: cursive;
+}
