@@ -16,6 +16,7 @@ export class ChangeipPage implements OnInit {
 
   IP:String="";
   PORT:String="";
+  PROTOCOLO:String="";
 
   constructor( 
     private AlertController:AlertController,
@@ -33,8 +34,12 @@ export class ChangeipPage implements OnInit {
     this.platform.ready().then(()=>{
       this.storage.get("serverIP").then(data=>{
         this.storage.get("serverPORT").then(data2=>{
-          this.IP = data;
-          this.PORT = data2;
+          this.storage.get("serverPROTOCOLO").then(data3=>{
+            this.PROTOCOLO = data3;
+            this.IP = data;
+            this.PORT = data2;
+            
+          })
         })
       })
     })
@@ -59,13 +64,15 @@ export class ChangeipPage implements OnInit {
     this.platform.ready().then(() => {
       this.storage.set("serverIP",this.IP).then(()=>{
         this.storage.set("serverPORT",this.PORT).then(()=>{
-          let serverURL = "http://"+this.IP+":"+this.PORT+"/Proyecto-2019Web/resources/";
-          this.storage.set("serverURL",serverURL).then(()=>{
-            this.toastCtrl.create({
-              message: 'Datos del servidor actualizados con éxito.',
-              duration: 3000
-            }).then(e=>e.present());
-            this.navController.pop();
+          this.storage.set("serverPROTOCOLO",this.PROTOCOLO).then(()=>{
+            let serverURL = this.PROTOCOLO+"://"+this.IP+":"+this.PORT+"/Proyecto-2019Web/resources/";
+            this.storage.set("serverURL",serverURL).then(()=>{
+              this.toastCtrl.create({
+                message: 'Datos del servidor actualizados con éxito.',
+                duration: 3000
+              }).then(e=>e.present());
+              this.navController.pop();
+            });
           });
         });
       });
